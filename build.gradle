@@ -1,0 +1,95 @@
+plugins {
+    id 'fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.mod_id
+}
+
+repositories {
+    mavenCentral()
+    maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" }
+}
+
+// Automated in-game checks. Kept in a source set of their own so none of it ships in the
+// release jar; `gradlew runGametest` boots a headless server, runs them and exits.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/atlamod.accesswidener")
+
+    splitEnvironmentSourceSets()
+
+    mods {
+        "atlamod" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+        "atlamod-gametest" {
+            sourceSet sourceSets.gametest
+        }
+    }
+
+    runs {
+        // A headless server that loads every registry, datapack and dimension and then exits:
+        // the quickest check that the data files still parse after a Minecraft update.
+        // `gradlew runGametest`, then read build/gametest/logs/latest.log.
+        gametest {
+            server()
+            name "Game Test"
+            vmArg "-Dfabric-api.gametest"
+            runDir "build/gametest"
+            source sourceSets.gametest
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    // Mojang's own names, so the port keeps the class and method names the NeoForge build used.
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // NeoForge's own ModConfigSpec on Fabric, so the TOML config, its comments and the
+    // per-world server config keep working exactly as they did. Bundled inside our jar.
+    modImplementation "maven.modrinth:forge-config-api-port:${project.fcap_version}"
+    include "maven.modrinth:forge-config-api-port:${project.fcap_version}"
+    // Its TOML library ships NESTED inside it. Fabric Loader unpacks that in a real install,
+    // but a Loom dev run does not, so compiling and running in dev need it directly.
+    compileOnly "com.electronwill.night-config:core:3.8.3"
+    compileOnly "com.electronwill.night-config:toml:3.8.3"
+    localRuntime "com.electronwill.night-config:core:3.8.3"
+    localRuntime "com.electronwill.night-config:toml:3.8.3"
+
+    // The "Config" button in the mod list. Optional at runtime.
+    modCompileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+    modLocalRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+    it.options.encoding = 'UTF-8'
+    it.options.compilerArgs += ["-Xmaxerrs", "10000", "-Xlint:deprecation"]
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}

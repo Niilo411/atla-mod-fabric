@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.minecraft.atlamod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EntityMixin",
+    "ItemStackMixin",
+    "LivingEntityMixin",
+    "PlayerMixin",
+    "ServerLevelMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}

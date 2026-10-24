@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "atlamod-gametest",
+  "version": "1.0.0",
+  "name": "Atla mod game tests",
+  "description": "Automated in-game checks for the Atla mod. Development only; never shipped.",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": ["com.minecraft.atlamod.gametest.AtlaGameTests"]
+  },
+  "depends": {
+    "atlamod": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

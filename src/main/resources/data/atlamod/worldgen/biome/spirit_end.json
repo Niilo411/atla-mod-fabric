@@ -1,0 +1,32 @@
+{
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "block_search_extent": 8,
+        "offset": 2.0,
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 6000
+      }
+    },
+    "minecraft:visual/fog_color": "#181318",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#050533"
+  },
+  "carvers": [],
+  "downfall": 0.0,
+  "has_precipitation": false,
+  "temperature": 0.5,
+  "effects": {
+    "water_color": "#3f76e4"
+  },
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [], "axolotls": [], "creature": [], "misc": [],
+    "monster": [], "underground_water_creature": [],
+    "water_ambient": [], "water_creature": []
+  },
+  "features": [
+    [ "atlamod:spirit_island" ],
+    [], [], [], [], [], [], [], [], [], []
+  ]
+}

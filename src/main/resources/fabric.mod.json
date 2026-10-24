@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "atlamod",
+  "version": "${version}",
+  "name": "Atla mod",
+  "description": "Avatar-style elemental bending. Four elements, eight sub-elements and over a hundred abilities behind a progression tree you unlock as you play.",
+  "authors": ["Niilo Kahn"],
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.minecraft.atlamod.Atlamod"],
+    "client": ["com.minecraft.atlamod.client.AtlamodClient"]
+  },
+  "mixins": [
+    "atlamod.mixins.json",
+    { "config": "atlamod.client.mixins.json", "environment": "client" }
+  ],
+  "accessWidener": "atlamod.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

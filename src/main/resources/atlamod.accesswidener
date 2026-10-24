@@ -1,0 +1,15 @@
+accessWidener v2 named
+# Furnace burn time, for the Ignite ability. Package-private, and there is no public
+# "burn for N ticks" API. Renamed from litTime/litDuration in 1.21.2.
+accessible field net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity litTimeRemaining I
+mutable field net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity litTimeRemaining I
+accessible field net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity litTotalTime I
+mutable field net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity litTotalTime I
+
+# Movement input, rewritten in place for Stunned, Disorientation and rooting. Since
+# 1.21.2 the move vector is a protected field of ClientInput.
+accessible field net/minecraft/client/player/ClientInput moveVector Lnet/minecraft/world/phys/Vec2;
+
+# Whether a player model is the slim one, so the bending armor layer bakes the matching
+# armor set. AvatarRenderer knows it but does not expose it.
+accessible field net/minecraft/client/model/player/PlayerModel slim Z
