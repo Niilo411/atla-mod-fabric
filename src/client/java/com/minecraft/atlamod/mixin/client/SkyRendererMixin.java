@@ -4,14 +4,14 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.minecraft.atlamod.client.SpiritSky;
 import com.minecraft.atlamod.client.WorldEventSky;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.renderpearl.api.commands.RenderPass;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SkyRenderer;
-import net.minecraft.client.renderer.state.SkyRenderState;
+import net.minecraft.client.renderer.state.level.SkyRenderState;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.level.dimension.DimensionType;
 import org.joml.Vector4f;
-import org.joml.Vector4fc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,8 +32,8 @@ public abstract class SkyRendererMixin {
 
     /** The blood moon: vanilla's moon, handed to the shader red. See WorldEventSky. */
     @ModifyArg(method = "renderMoon", index = 1, at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/DynamicUniforms;writeTransform(Lorg/joml/Matrix4fc;Lorg/joml/Vector4fc;Lorg/joml/Vector3fc;Lorg/joml/Matrix4fc;)Lcom/mojang/blaze3d/buffers/GpuBufferSlice;"))
-    private Vector4fc atlamod$bloodMoon(Vector4fc colour) {
+            target = "Lnet/minecraft/client/renderer/DynamicGpuData;writeTransform(Lorg/joml/Matrix4f;Lorg/joml/Vector4f;)Lcom/mojang/renderpearl/api/buffers/GpuBufferSlice;"))
+    private Vector4f atlamod$bloodMoon(Vector4f colour) {
         Vector4f tinted = new Vector4f(colour);
         WorldEventSky.tintMoon(tinted);
         return tinted;
@@ -41,9 +41,9 @@ public abstract class SkyRendererMixin {
 
     /** The comet and the eclipse, drawn once vanilla's sun, moon and stars are down. */
     @Inject(method = "renderSunMoonAndStars", at = @At("TAIL"))
-    private void atlamod$worldEvents(PoseStack poseStack, float sunAngle, float moonAngle, float starAngle,
-                                     MoonPhase moonPhase, float rainBrightness, float starBrightness,
+    private void atlamod$worldEvents(RenderPass renderPass, PoseStack poseStack,
+                                     float sunAngle, float moonAngle, float starAngle, MoonPhase moonPhase, float rainBrightness, float starBrightness,
                                      CallbackInfo ci) {
-        WorldEventSky.renderEvents(sunAngle, rainBrightness);
+        WorldEventSky.renderEvents(renderPass, sunAngle, rainBrightness);
     }
 }

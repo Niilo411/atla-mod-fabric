@@ -133,7 +133,7 @@ public final class SoundWalls {
                 // Thinned out so the wall shimmers rather than being a solid sheet of
                 // particles — it is meant to look transparent, and drawing every point
                 // every tick is both uglier and far more packets.
-                if (wall.level.random.nextFloat() > 0.25F) continue;
+                if (wall.level.getRandom().nextFloat() > 0.25F) continue;
 
                 wall.level.sendParticles(ParticleTypes.NOTE, at.x, at.y, at.z, 1, 0.0, 0.0, 0.0, 0.0);
             }
@@ -171,7 +171,7 @@ public final class SoundWalls {
 
             living.setDeltaMovement(
                     living.getDeltaMovement().add(facing.scale(PUSH * side)));
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
     }
 

@@ -220,7 +220,7 @@ public final class LavaTsunamis {
             // Carried along with the wave rather than merely hurt by it.
             Vec3 push = wave.forward.scale(0.9);
             living.setDeltaMovement(push.x, 0.4, push.z);
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
 
         Lava.spatter(wave.level, front.add(0.0, 2.0, 0.0), 30, HALF_WIDTH * 0.6);

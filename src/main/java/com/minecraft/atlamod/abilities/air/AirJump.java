@@ -117,9 +117,8 @@ public class AirJump implements ChargedAbility {
         // — a ledge, a roof — so the player needs to know what they are buying before
         // they let go, which the charge bar on its own can't tell them.
         if (ticksHeld % 2 == 0) {
-            player.displayClientMessage(
-                    Component.literal("§bAir Jump: §f" + Math.round(heightFor(power)) + " blocks"),
-                    true);
+            player.sendOverlayMessage(
+                    Component.literal("§bAir Jump: §f" + Math.round(heightFor(power)) + " blocks"));
         }
 
         if (ticksHeld % 10 == 0) {
@@ -142,7 +141,7 @@ public class AirJump implements ChargedAbility {
         // while running carries that run into the air instead of stopping dead.
         Vec3 motion = player.getDeltaMovement();
         player.setDeltaMovement(motion.x, launch, motion.z);
-        player.hurtMarked = true;
+        player.syncVelocity = true;
 
         data.setAirJumpTicks(AIR_TIME);
         data.setAirJumpLeftGround(false);

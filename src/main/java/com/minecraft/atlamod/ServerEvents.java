@@ -135,170 +135,12 @@ public class ServerEvents {
             com.minecraft.atlamod.abilities.gravity.MeteorBlocks.forgetLevel(level);
         }
     }
-    /**
-     * Puts the Lightningbending Scroll in the weaponsmith's book, for 64 copper.
-     *
-     * Offered at levels 1 AND 3 rather than at one level, because a villager picks
-     * only a couple of trades at random from each level's pool — one entry would be
-     * a coin flip per weaponsmith. Two entries give a fresh smith a good chance of
-     * having it and a levelled one a second, without the same trade showing up twice
-     * in the same tier.
-     */
-    public static void onVillagerTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.WEAPONSMITH) return;
 
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.COPPER_INGOT, 64),
-                    new net.minecraft.world.item.ItemStack(Atlamod.LIGHTNING_SCROLL),
-                    2,   // how many times it can be bought before restocking
-                    12,  // villager xp for the trade
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Icebending Scroll in the fisherman's book, for a Heart of the Sea.
-     *
-     * Same two levels as the weaponsmith's, for the same reason: a villager picks only
-     * a couple of trades at random from each level's pool, so one entry would be a coin
-     * flip per fisherman.
-     */
-    public static void onFishermanTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.FISHERMAN) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.HEART_OF_THE_SEA, 1),
-                    new net.minecraft.world.item.ItemStack(Atlamod.ICE_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Bloodbending Scroll in the cleric's book, for 5 rabbit feet.
-     *
-     * Same two levels as the other five scrolls, for the same reason: a villager picks
-     * only a couple of trades at random from each level's pool.
-     */
-    public static void onClericTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.CLERIC) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.RABBIT_FOOT, 5),
-                    new net.minecraft.world.item.ItemStack(Atlamod.BLOOD_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Lavabending Scroll in the shepherd's book, for 5 nether bricks.
-     *
-     * Same two levels as the other six scrolls, for the same reason: a villager picks
-     * only a couple of trades at random from each level's pool.
-     */
-    public static void onShepherdTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.SHEPHERD) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.NETHER_BRICK, 5),
-                    new net.minecraft.world.item.ItemStack(Atlamod.LAVA_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Combustionbending Scroll in the armorer's book, for 32 gunpowder.
-     *
-     * Same two levels as the other four scrolls, for the same reason: a villager picks
-     * only a couple of trades at random from each level's pool.
-     */
-    public static void onArmorerTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.ARMORER) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.GUNPOWDER, 32),
-                    new net.minecraft.world.item.ItemStack(Atlamod.COMBUSTION_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Metalbending Scroll in the mason's book, for 4 iron blocks.
-     *
-     * Same two levels as the other three scrolls, for the same reason: a villager
-     * picks only a couple of trades at random from each level's pool.
-     */
-    public static void onMasonTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.MASON) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.IRON_BLOCK, 4),
-                    new net.minecraft.world.item.ItemStack(Atlamod.METAL_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Soundbending Scroll in the fletcher's book, for 32 feathers.
-     *
-     * Same two levels as the other two scrolls, for the same reason: a villager picks
-     * only a couple of trades at random from each level's pool.
-     */
-    public static void onFletcherTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.FLETCHER) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.FEATHER, 32),
-                    new net.minecraft.world.item.ItemStack(Atlamod.SOUND_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
-    /**
-     * Puts the Gravitybending Scroll in the cartographer's book, for 6 pistons.
-     *
-     * Same two levels as every other scroll, for the same reason: a villager picks
-     * only a couple of trades at random from each level's pool.
-     */
-    public static void onCartographerTrades(com.minecraft.atlamod.platform.event.VillagerTradesEvent event) {
-        if (event.getType() != net.minecraft.world.entity.npc.villager.VillagerProfession.CARTOGRAPHER) return;
-
-        for (int level : new int[] { 1, 3 }) {
-            event.getTrades().get(level).add(new com.minecraft.atlamod.platform.event.BasicItemListing(
-                    new net.minecraft.world.item.ItemStack(
-                            net.minecraft.world.item.Items.PISTON, 6),
-                    new net.minecraft.world.item.ItemStack(Atlamod.GRAVITY_SCROLL),
-                    2,
-                    12,
-                    0.05F));
-        }
-    }
-
+    // The scroll trades are DATA since 26.1: data/atlamod/villager_trade/<profession>/
+    // holds one trade per scroll, and each is added to that profession's level 1 AND level 3
+    // tags under data/minecraft/tags/villager_trade — two levels because a villager only
+    // draws a couple of trades from each level's pool, so one entry would be a coin flip
+    // per villager.
     /**
      * Pushes a player's element list back to their own client.
      *
@@ -394,7 +236,7 @@ public class ServerEvents {
                             var server = context.getSource().getServer();
                             var overworld = server.overworld();
 
-                            long now = overworld.getDayTime();
+                            long now = overworld.getOverworldClockTime();
 
                             // ALREADY RUNNING is answered rather than obeyed. nextStart
                             // only ever looks forward, so asking for an event you are
@@ -412,10 +254,12 @@ public class ServerEvents {
 
                             long start = com.minecraft.atlamod.events.WorldEvents.nextStart(now, chosen);
 
-                            // Every dimension, the way /time set does it.
-                            for (net.minecraft.server.level.ServerLevel level : server.getAllLevels()) {
-                                level.setDayTime(start);
-                            }
+                            // Since 26.1 there is no per-level day time to set: one overworld
+                            // CLOCK is what every dimension reads, so moving it is what /time
+                            // set does and moves every dimension at once.
+                            server.clockManager().setTotalTicks(
+                                    server.registryAccess().getOrThrow(net.minecraft.world.clock.WorldClocks.OVERWORLD),
+                                    start);
 
                             final com.minecraft.atlamod.events.WorldEvents.Event started = chosen;
                             long skippedDays = (start - now) / 24000L;
@@ -826,7 +670,7 @@ public class ServerEvents {
                 mob.setTarget(null);
             } else if (living instanceof ServerPlayer stunnedPlayer) {
                 // A player's client owns their position, so it has to be told.
-                stunnedPlayer.hurtMarked = true;
+                stunnedPlayer.syncVelocity = true;
             }
         }
 
@@ -1114,9 +958,9 @@ public class ServerEvents {
         // non-bender's flat trickle from ordinary stone is not worth a line every
         // single block.
         if (spiritOre) {
-            player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+            player.sendOverlayMessage(net.minecraft.network.chat.Component.literal(
                     "§b+" + gained + " bending XP §7(" + data.getXp() + "/"
-                            + com.minecraft.atlamod.abilities.AbilitySupport.xpPerLevel() + ")"), true);
+                            + com.minecraft.atlamod.abilities.AbilitySupport.xpPerLevel() + ")"));
         }
     }
 
@@ -1810,7 +1654,7 @@ public class ServerEvents {
                 player.setAttached(ModAttachments.BENDING_DATA, data);
 
                 player.setDeltaMovement(0, player.getDeltaMovement().y < 0 ? -0.08 : 0, 0);
-                player.hurtMarked = true;
+                player.syncVelocity = true;
 
                 if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                     if (data.getMeditateTickTimer() % 5 == 0) {

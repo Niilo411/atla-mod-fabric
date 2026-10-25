@@ -52,8 +52,8 @@ public final class WaterSupply {
 
         ItemStack canteen = findUsableCanteen(player);
         if (canteen.isEmpty()) {
-            player.displayClientMessage(Component.literal(
-                    "§bNo water nearby, and no water in your canteen!"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§bNo water nearby, and no water in your canteen!"));
             return false;
         }
 

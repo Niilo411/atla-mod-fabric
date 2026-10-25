@@ -77,7 +77,7 @@ public class GravityThrow implements Ability {
         horizontal = horizontal.normalize().scale(HORIZONTAL_SPEED);
 
         target.setDeltaMovement(horizontal.x, launch, horizontal.z);
-        target.hurtMarked = true;
+        target.syncVelocity = true;
 
         // The throw's own doing, not a fall the target had already banked — vanilla's
         // own fall-damage math is what actually hurts them, on the way down.

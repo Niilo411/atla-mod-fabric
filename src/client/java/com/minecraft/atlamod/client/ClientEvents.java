@@ -22,7 +22,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec2;
-import org.lwjgl.glfw.GLFW;
 
 public class ClientEvents {
 
@@ -116,8 +115,8 @@ public class ClientEvents {
         if (mc.player == null || mc.level == null) return;
 
         // Safely open the menu if the server flagged it AND no other screen is open.
-        if (needsToOpenMenu && mc.screen == null) {
-            mc.setScreen(new ElementSelectionScreen());
+        if (needsToOpenMenu && mc.gui.screen() == null) {
+            mc.gui.setScreen(new ElementSelectionScreen());
             needsToOpenMenu = false;
         }
 
@@ -134,11 +133,10 @@ public class ClientEvents {
 
         // Everything below is a key PRESS, and vanilla only registers presses while no
         // screen is open — so there is nothing to read while one is.
-        if (mc.screen != null) return;
+        if (mc.gui.screen() != null) return;
 
         // --- UNIVERSAL LEFT CLICK DETECTOR ---
-        boolean isLeftClicking = GLFW.glfwGetMouseButton(mc.getWindow().handle(),
-                GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+        boolean isLeftClicking = mc.mouseHandler.isLeftPressed();
         if (isLeftClicking && !wasLeftClicking) {
             ClientPlayNetworking.send(new LeftClickTriggerPacket());
         }
@@ -169,7 +167,7 @@ public class ClientEvents {
         }
 
         while (KeyBindings.UPGRADE_MENU.consumeClick()) {
-            mc.setScreen(new UpgradeMenuScreen());
+            mc.gui.setScreen(new UpgradeMenuScreen());
         }
 
         while (KeyBindings.SWITCH_ELEMENT.consumeClick()) {
@@ -273,8 +271,8 @@ public class ClientEvents {
     public static void applyCameraShake(PoseStack poseStack, float partialTick) {
         if (!ClientShake.active()) return;
 
-        poseStack.mulPose(Axis.ZP.rotationDegrees(ClientShake.offset(2, partialTick)));
-        poseStack.mulPose(Axis.XP.rotationDegrees(ClientShake.offset(1, partialTick)));
-        poseStack.mulPose(Axis.YP.rotationDegrees(ClientShake.offset(0, partialTick)));
+        poseStack.rotateDegrees(Axis.ZP, ClientShake.offset(2, partialTick));
+        poseStack.rotateDegrees(Axis.XP, ClientShake.offset(1, partialTick));
+        poseStack.rotateDegrees(Axis.YP, ClientShake.offset(0, partialTick));
     }
 }

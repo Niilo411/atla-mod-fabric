@@ -1,5 +1,6 @@
 package com.minecraft.atlamod.spirit;
 
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import com.minecraft.atlamod.spirit.island.IslandStyle;
@@ -75,22 +76,22 @@ public final class SpiritSpawner {
      * than just trading one for the other.
      */
     private static final List<Spawn> EVERYWHERE = List.of(
-            new Spawn(EntityType.ALLAY, 60),
-            new Spawn(EntityType.VEX, 24)
+            new Spawn(EntityTypes.ALLAY, 60),
+            new Spawn(EntityTypes.VEX, 24)
     );
 
-    private static final List<Spawn> END = List.of(new Spawn(EntityType.ENDERMAN, 10));
+    private static final List<Spawn> END = List.of(new Spawn(EntityTypes.ENDERMAN, 10));
 
     private static final List<Spawn> NETHER = List.of(
-            new Spawn(EntityType.ZOMBIFIED_PIGLIN, 8),
-            new Spawn(EntityType.PIGLIN, 6)
+            new Spawn(EntityTypes.ZOMBIFIED_PIGLIN, 8),
+            new Spawn(EntityTypes.PIGLIN, 6)
     );
 
     /** Shared by the plain overworld islands and the crimson mountains. */
     private static final List<Spawn> PASTURE = List.of(
-            new Spawn(EntityType.PIG, 7),
-            new Spawn(EntityType.SHEEP, 7),
-            new Spawn(EntityType.COW, 7)
+            new Spawn(EntityTypes.PIG, 7),
+            new Spawn(EntityTypes.SHEEP, 7),
+            new Spawn(EntityTypes.COW, 7)
     );
 
     /**
@@ -103,11 +104,11 @@ public final class SpiritSpawner {
      * curiosity into livestock.
      */
     private static final List<Spawn> SWAMP = List.of(
-            new Spawn(EntityType.FROG, 6),
-            new Spawn(EntityType.SNIFFER, 1),
-            new Spawn(EntityType.SHEEP, 5),
-            new Spawn(EntityType.CHICKEN, 6),
-            new Spawn(EntityType.COW, 5)
+            new Spawn(EntityTypes.FROG, 6),
+            new Spawn(EntityTypes.SNIFFER, 1),
+            new Spawn(EntityTypes.SHEEP, 5),
+            new Spawn(EntityTypes.CHICKEN, 6),
+            new Spawn(EntityTypes.COW, 5)
     );
 
     private SpiritSpawner() {
@@ -129,7 +130,7 @@ public final class SpiritSpawner {
         if (census.living() >= CAP) return;
 
         boolean allaysFull = census.allays() >= ALLAY_CAP;
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
 
         for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
             BlockPos pos = groundNear(level, player, random);
@@ -137,7 +138,7 @@ public final class SpiritSpawner {
 
             EntityType<?> type = pick(level, pos, random);
             if (type == null) continue;
-            if (type == EntityType.ALLAY && allaysFull) continue;
+            if (type == EntityTypes.ALLAY && allaysFull) continue;
 
             type.spawn(level, pos, EntitySpawnReason.NATURAL);
             return;
@@ -268,7 +269,7 @@ public final class SpiritSpawner {
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, box,
                 found -> !(found instanceof ServerPlayer))) {
             living++;
-            if (entity.getType() == EntityType.ALLAY) allays++;
+            if (entity.getType() == EntityTypes.ALLAY) allays++;
         }
 
         return new Census(living, allays);

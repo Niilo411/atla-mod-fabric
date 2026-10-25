@@ -63,8 +63,8 @@ public class LavaGeyser implements TwoPhaseAbility {
 
     @Override
     public void execute(ServerPlayer player, BendingData data) {
-        player.displayClientMessage(Component.literal(
-                "§6Three geysers ready — left click to set one down"), true);
+        player.sendOverlayMessage(Component.literal(
+                "§6Three geysers ready — left click to set one down"));
     }
 
     /** Shown in the bender's hands while the geysers are waiting to be placed. */
@@ -88,8 +88,8 @@ public class LavaGeyser implements TwoPhaseAbility {
 
         BlockPos ground = Lava.footing(level, BlockPos.containing(aim), UP_SCAN, DOWN_SCAN);
         if (ground == null) {
-            player.displayClientMessage(Component.literal(
-                    "§7No ground there for a geyser."), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§7No ground there for a geyser."));
             return;
         }
 

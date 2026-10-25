@@ -13,7 +13,6 @@ public class AtlamodClient implements ClientModInitializer {
         ModHudOverlay.register();
         ModEntityRenderers.register();
         SpiritPortalColors.register();
-        BlockRenderLayers.register();
         WorldEventSky.register();
 
         // The mod list's Config button opens OUR settings screen rather than a generic

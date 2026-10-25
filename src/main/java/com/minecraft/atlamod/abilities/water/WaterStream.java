@@ -108,8 +108,8 @@ public class WaterStream implements TwoPhaseAbility {
         if (!data.getActiveTwoPhaseAbility().isEmpty()) return false;
 
         if (findWater(player) == null) {
-            player.displayClientMessage(
-                    Component.literal("§bYou must be looking at water!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§bYou must be looking at water!"));
             return false;
         }
         return true;
@@ -181,8 +181,8 @@ public class WaterStream implements TwoPhaseAbility {
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.7F, 0.6F);
 
-        player.displayClientMessage(
-                Component.literal("§bThe water slipped away..."), true);
+        player.sendOverlayMessage(
+                Component.literal("§bThe water slipped away..."));
     }
 
     /** The block of water the player is looking at, or null if they are not. */

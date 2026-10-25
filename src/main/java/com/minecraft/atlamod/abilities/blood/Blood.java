@@ -104,8 +104,8 @@ public final class Blood {
     public static boolean canBendOrTell(ServerPlayer caster, LivingEntity target) {
         if (canBend(caster, target)) return true;
 
-        caster.displayClientMessage(Component.literal(
-                "Their blood is stronger than yours.").withStyle(ChatFormatting.DARK_RED), true);
+        caster.sendOverlayMessage(Component.literal(
+                "Their blood is stronger than yours.").withStyle(ChatFormatting.DARK_RED));
         return false;
     }
 

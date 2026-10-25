@@ -112,11 +112,11 @@ public class Flight implements PassiveAbility {
 
         player.setDeltaMovement(motion.x, 0.0, motion.z);
         // Players ignore server-side velocity unless it is explicitly pushed to them.
-        player.hurtMarked = true;
+        player.syncVelocity = true;
 
         if (player.tickCount % CEILING_MESSAGE_INTERVAL == 0) {
-            player.displayClientMessage(
-                    Component.literal("§bThe air is too thin to climb any higher!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§bThe air is too thin to climb any higher!"));
         }
     }
 

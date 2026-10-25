@@ -124,9 +124,9 @@ public class WaterHeal implements ChanneledAbility {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (canDrawFrom(player, data)) return true;
 
-        player.displayClientMessage(Component.literal(data.hasUpgrade(POTENT_HEALING)
+        player.sendOverlayMessage(Component.literal(data.hasUpgrade(POTENT_HEALING)
                 ? "§bYou must be in water or on snow to heal!"
-                : "§bYou must be in water to heal!"), true);
+                : "§bYou must be in water to heal!"));
         return false;
     }
 

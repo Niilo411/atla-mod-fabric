@@ -139,8 +139,8 @@ public class ArmorPierce implements ChargedAbility, TwoPhaseAbility {
             Metal.clang(level, target.position(), 1.6F, 0.6F);
             Metal.spark(level, target.getEyePosition(), 40, 0.5);
 
-            owner.displayClientMessage(net.minecraft.network.chat.Component.literal(
-                    "§7Armour destroyed."), true);
+            owner.sendOverlayMessage(net.minecraft.network.chat.Component.literal(
+                    "§7Armour destroyed."));
             return;
         }
 

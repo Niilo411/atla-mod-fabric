@@ -115,9 +115,9 @@ public class Icicles implements TwoPhaseAbility {
             // Scattered around the aim line rather than fanned in a flat row, so the
             // burst reads as a handful thrown rather than a volley fired.
             Vec3 direction = look.add(
-                    (level.random.nextDouble() - 0.5) * SPREAD * 2.0,
-                    (level.random.nextDouble() - 0.5) * SPREAD * 2.0,
-                    (level.random.nextDouble() - 0.5) * SPREAD * 2.0);
+                    (level.getRandom().nextDouble() - 0.5) * SPREAD * 2.0,
+                    (level.getRandom().nextDouble() - 0.5) * SPREAD * 2.0,
+                    (level.getRandom().nextDouble() - 0.5) * SPREAD * 2.0);
 
             BendingProjectiles.launch(player, from, direction, shard);
         }

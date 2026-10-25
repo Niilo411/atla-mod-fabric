@@ -98,8 +98,8 @@ public class GravityEncase implements ChargedAbility {
                 // Drawn from somewhere in the 25-block area around the caster, as the
                 // design asks — a different sample each block, so the cage isn't one
                 // material copied sixteen times.
-                int dx = level.random.nextInt(MATERIAL_AREA * 2 + 1) - MATERIAL_AREA;
-                int dz = level.random.nextInt(MATERIAL_AREA * 2 + 1) - MATERIAL_AREA;
+                int dx = level.getRandom().nextInt(MATERIAL_AREA * 2 + 1) - MATERIAL_AREA;
+                int dz = level.getRandom().nextInt(MATERIAL_AREA * 2 + 1) - MATERIAL_AREA;
                 BlockState material = EarthWorks.materialUnder(level, casterFeet.offset(dx, 0, dz));
 
                 EarthWorks.raiseFor(level, pos, material, TRAP_TICKS - EarthWorks.SLIDE_TICKS,

@@ -128,8 +128,8 @@ public class AbilityHandler {
             return false;
         }
 
-        player.displayClientMessage(Component.literal(
-                "§bBending is silent in the Spirit World."), true);
+        player.sendOverlayMessage(Component.literal(
+                "§bBending is silent in the Spirit World."));
         return true;
     }
 
@@ -155,8 +155,8 @@ public class AbilityHandler {
         if (com.minecraft.atlamod.AtlaConfig.abilityEnabled(ability.getName())) return false;
         if (ability.isActive(player, data)) return false;
 
-        player.displayClientMessage(Component.literal(
-                "§c" + ability.getName() + " is disabled in this world's settings."), true);
+        player.sendOverlayMessage(Component.literal(
+                "§c" + ability.getName() + " is disabled in this world's settings."));
         return true;
     }
 
@@ -187,16 +187,16 @@ public class AbilityHandler {
             return false;
         }
 
-        player.displayClientMessage(Component.literal(
-                "§8The sun is dark. There is no fire in you."), true);
+        player.sendOverlayMessage(Component.literal(
+                "§8The sun is dark. There is no fire in you."));
         return true;
     }
 
     private static boolean refusedChiBlocked(ServerPlayer player, BendingData data) {
         if (!data.isChiBlocked()) return false;
 
-        player.displayClientMessage(Component.literal(
-                "§cYour chi is blocked! (" + ((data.getChiBlockedTicks() + 19) / 20) + "s)"), true);
+        player.sendOverlayMessage(Component.literal(
+                "§cYour chi is blocked! (" + ((data.getChiBlockedTicks() + 19) / 20) + "s)"));
         return true;
     }
 
@@ -224,8 +224,8 @@ public class AbilityHandler {
         // Deafen locks its victims out of bending entirely for a few seconds. Checked
         // at the very top, before anything is spent or stamped.
         if (data.isBendingLocked()) {
-            player.displayClientMessage(Component.literal(
-                    "§cYou cannot bend right now! (" + ((data.getBendingLockedTicks() + 19) / 20) + "s)"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§cYou cannot bend right now! (" + ((data.getBendingLockedTicks() + 19) / 20) + "s)"));
             return;
         }
 
@@ -293,8 +293,8 @@ public class AbilityHandler {
             // one: Earth sink says nothing for two minutes and then quietly works, and
             // the only honest reading of that from the outside is "it never comes back".
             int secondsLeft = (data.getCooldownRemaining(ability.getKey()) + 19) / 20;
-            player.displayClientMessage(Component.literal(
-                    "§c" + ability.getName() + " is on cooldown! (" + secondsLeft + "s)"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§c" + ability.getName() + " is on cooldown! (" + secondsLeft + "s)"));
             return;
         }
 
@@ -444,8 +444,8 @@ public class AbilityHandler {
         // or a channel that was already running when the lockout landed could never be
         // let go of and would drain chi until it ran dry.
         if (isHeld && data.isBendingLocked()) {
-            player.displayClientMessage(Component.literal(
-                    "§cYou cannot bend right now! (" + ((data.getBendingLockedTicks() + 19) / 20) + "s)"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§cYou cannot bend right now! (" + ((data.getBendingLockedTicks() + 19) / 20) + "s)"));
             return;
         }
 
@@ -503,8 +503,8 @@ public class AbilityHandler {
 
         if (AbilityTuning.cooldownTicks(ability) > 0 && data.isOnCooldown(ability.getKey())) {
             int secondsLeft = (data.getCooldownRemaining(ability.getKey()) + 19) / 20;
-            player.displayClientMessage(Component.literal(
-                    "§c" + ability.getName() + " is on cooldown! (" + secondsLeft + "s)"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§c" + ability.getName() + " is on cooldown! (" + secondsLeft + "s)"));
             return;
         }
 
@@ -513,8 +513,8 @@ public class AbilityHandler {
         // Chi is only CHECKED here — it is spent when the cast actually lands, so
         // winding up and letting go early costs the player nothing.
         if (data.getCurrentChi() < chiCostFor(player, data, ability)) {
-            player.displayClientMessage(Component.literal(
-                    "§cNot enough Chi! (Requires " + chiCostFor(player, data, ability) + ")"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§cNot enough Chi! (Requires " + chiCostFor(player, data, ability) + ")"));
             return;
         }
 
@@ -592,8 +592,8 @@ public class AbilityHandler {
 
         if (AbilityTuning.cooldownTicks(ability) > 0 && data.isOnCooldown(ability.getKey())) {
             int secondsLeft = (data.getCooldownRemaining(ability.getKey()) + 19) / 20;
-            player.displayClientMessage(Component.literal(
-                    "§c" + ability.getName() + " is on cooldown! (" + secondsLeft + "s)"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§c" + ability.getName() + " is on cooldown! (" + secondsLeft + "s)"));
             return;
         }
 
@@ -608,8 +608,8 @@ public class AbilityHandler {
         // keeps running below this figure once it is up.
         int requiredChi = ability.getMinimumChiToStart(data);
         if (data.getCurrentChi() < requiredChi) {
-            player.displayClientMessage(Component.literal(
-                    "§cNot enough Chi! (Requires " + requiredChi + ")"), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§cNot enough Chi! (Requires " + requiredChi + ")"));
             return;
         }
 
@@ -856,7 +856,7 @@ public class AbilityHandler {
         net.minecraft.world.phys.Vec3 motion = player.getDeltaMovement();
         player.setDeltaMovement(0.0, Math.min(0.0, motion.y), 0.0);
         // Players ignore server-side velocity unless it is explicitly pushed to them.
-        player.hurtMarked = true;
+        player.syncVelocity = true;
     }
 
     /**

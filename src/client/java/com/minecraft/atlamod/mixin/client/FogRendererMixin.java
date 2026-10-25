@@ -8,7 +8,7 @@ import org.joml.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FogRenderer.class)
 public abstract class FogRendererMixin {
@@ -18,7 +18,8 @@ public abstract class FogRendererMixin {
      */
     @Inject(method = "computeFogColor", at = @At("RETURN"))
     private void atlamod$worldEventFog(Camera camera, float partialTick, ClientLevel level, int renderDistance,
-                                       float darkenAmount, CallbackInfoReturnable<Vector4f> cir) {
-        WorldEventSky.tintFog(cir.getReturnValue());
+                                       float darkenAmount, Vector4f dest, CallbackInfo ci) {
+        // Since 26.1 the colour is written into dest rather than returned.
+        WorldEventSky.tintFog(dest);
     }
 }

@@ -120,7 +120,7 @@ public class WaterPush implements Ability {
 
             living.setDeltaMovement(away.x * PUSH_SPEED, PUSH_LIFT, away.z * PUSH_SPEED);
             // Without this a pushed player's client ignores the server's velocity change.
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
     }
 }

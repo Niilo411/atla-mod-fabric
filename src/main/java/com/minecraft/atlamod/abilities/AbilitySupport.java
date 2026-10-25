@@ -37,8 +37,8 @@ public final class AbilitySupport {
     /** Spends chi and grants XP. Returns false (and warns the player) if they can't afford it. */
     public static boolean consumeChiAndGiveXp(ServerPlayer player, BendingData data, int chiCost, int xpReward) {
         if (data.getCurrentChi() < chiCost) {
-            player.displayClientMessage(
-                    Component.literal("§cNot enough Chi! (Requires " + chiCost + ")"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§cNot enough Chi! (Requires " + chiCost + ")"));
             return false;
         }
 

@@ -1,5 +1,6 @@
 package com.minecraft.atlamod.abilities.earth;
 
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -137,7 +138,7 @@ public final class EarthWorks {
         // Its own timer would drop it as an item or try to place it; held at zero so
         // only this class decides where it ends up.
         mover.time = 0;
-        // EntityType.FALLING_BLOCK is registered with updateInterval(20) — its position
+        // EntityTypes.FALLING_BLOCK is registered with updateInterval(20) — its position
         // is only broadcast once a second. Without this a slide is never actually seen:
         // the block simply appears at the end of it. ServerEntity clears the flag after
         // each send, so it has to be set every tick.

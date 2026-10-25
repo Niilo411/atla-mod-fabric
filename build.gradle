@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -55,14 +55,14 @@ loom {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    // Mojang's own names, so the port keeps the class and method names the NeoForge build used.
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    // 26.1 onwards ships unobfuscated: the game's own names ARE Mojang's, so there is no
+    // mappings line and nothing is remapped (modImplementation became plain implementation).
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     // NeoForge's own ModConfigSpec on Fabric, so the TOML config, its comments and the
     // per-world server config keep working exactly as they did. Bundled inside our jar.
-    modImplementation "maven.modrinth:forge-config-api-port:${project.fcap_version}"
+    implementation "maven.modrinth:forge-config-api-port:${project.fcap_version}"
     include "maven.modrinth:forge-config-api-port:${project.fcap_version}"
     // Its TOML library ships NESTED inside it. Fabric Loader unpacks that in a real install,
     // but a Loom dev run does not, so compiling and running in dev need it directly.
@@ -72,8 +72,8 @@ dependencies {
     localRuntime "com.electronwill.night-config:toml:3.8.3"
 
     // The "Config" button in the mod list. Optional at runtime.
-    modCompileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
-    modLocalRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
+    compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+    localRuntime "maven.modrinth:modmenu:${project.modmenu_version}"
 }
 
 processResources {
@@ -84,12 +84,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+    it.options.release = 25
     it.options.encoding = 'UTF-8'
     it.options.compilerArgs += ["-Xmaxerrs", "10000", "-Xlint:deprecation"]
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
     withSourcesJar()
 }

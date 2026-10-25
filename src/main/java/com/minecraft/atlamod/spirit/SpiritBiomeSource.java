@@ -7,6 +7,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 
@@ -104,6 +105,16 @@ public class SpiritBiomeSource extends BiomeSource {
     }
 
     /**
+     * Since 26.1 a biome source hands out a RESOLVER rather than answering itself. The
+     * islands need no climate, so the sampler is ignored and the resolver is just the
+     * lookup below.
+     */
+    @Override
+    public BiomeResolver createResolver(Climate.Sampler sampler) {
+        return this::getNoiseBiome;
+    }
+
+    /**
      * The biome at a position.
      *
      * COORDINATES ARE QUARTS, not blocks — a quart is a 4x4x4 box, which is the resolution
@@ -111,8 +122,7 @@ public class SpiritBiomeSource extends BiomeSource {
      * SpiritIslands can answer, and forgetting it would spread every island over four
      * times its real footprint.
      */
-    @Override
-    public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+    private Holder<Biome> getNoiseBiome(int x, int y, int z) {
         SpiritIslands.Island island = SpiritIslands.coveringOrNull(x << 2, z << 2);
         if (island == null) return empty;
 

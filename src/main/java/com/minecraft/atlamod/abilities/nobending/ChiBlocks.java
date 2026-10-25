@@ -87,8 +87,8 @@ public final class ChiBlocks {
 
         victim.addEffect(new MobEffectInstance(MobEffects.GLOWING, MARK_TICKS, 0, false, false, true));
 
-        caster.displayClientMessage(Component.literal(
-                "§eChi points exposed — land " + PUNCHES_NEEDED + " hits in 10s."), true);
+        caster.sendOverlayMessage(Component.literal(
+                "§eChi points exposed — land " + PUNCHES_NEEDED + " hits in 10s."));
     }
 
     /** Whether this caster already has a mark running, so a second cast can be refused. */
@@ -124,8 +124,8 @@ public final class ChiBlocks {
                 MARKS.remove(mark);
                 land(mark, caster);
             } else {
-                caster.displayClientMessage(Component.literal(
-                        "§e" + mark.punches + " / " + PUNCHES_NEEDED), true);
+                caster.sendOverlayMessage(Component.literal(
+                        "§e" + mark.punches + " / " + PUNCHES_NEEDED));
             }
             return true;
         }
@@ -144,7 +144,7 @@ public final class ChiBlocks {
         victim.removeEffect(MobEffects.GLOWING);
         block(victim, BLOCK_TICKS);
 
-        caster.displayClientMessage(Component.literal("§aChi blocked!"), true);
+        caster.sendOverlayMessage(Component.literal("§aChi blocked!"));
 
         mark.level.playSound(null, victim.blockPosition(),
                 SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0F, 0.6F);
@@ -170,8 +170,8 @@ public final class ChiBlocks {
         data.setChiBlockedTicks(ticks);
         player.setAttached(ModAttachments.BENDING_DATA, data);
 
-        player.displayClientMessage(Component.literal(
-                "§cYour chi is blocked!"), true);
+        player.sendOverlayMessage(Component.literal(
+                "§cYour chi is blocked!"));
     }
 
     // ==========================================================================
@@ -210,8 +210,8 @@ public final class ChiBlocks {
         caster.setAttached(ModAttachments.BENDING_DATA, data);
         PacketDistributor.sendToPlayer(caster, SyncStatsPacket.of(data));
 
-        caster.displayClientMessage(Component.literal(
-                "§cThey slipped away — chi block wasted."), true);
+        caster.sendOverlayMessage(Component.literal(
+                "§cThey slipped away — chi block wasted."));
 
         return false;
     }
@@ -223,7 +223,7 @@ public final class ChiBlocks {
         data.setChiBlockedTicks(data.getChiBlockedTicks() - 1);
 
         if (!data.isChiBlocked()) {
-            player.displayClientMessage(Component.literal("§aYour chi flows again."), true);
+            player.sendOverlayMessage(Component.literal("§aYour chi flows again."));
         }
     }
 

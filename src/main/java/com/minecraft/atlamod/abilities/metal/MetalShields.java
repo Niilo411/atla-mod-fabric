@@ -186,7 +186,7 @@ public final class MetalShields {
                     ModEffects.STUNNED, THROW_STUN, 0, false, true, true));
 
             living.setDeltaMovement(look.x * 0.6, 0.3, look.z * 0.6);
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
     }
 

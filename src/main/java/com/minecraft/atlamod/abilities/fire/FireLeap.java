@@ -48,7 +48,7 @@ public class FireLeap implements Ability {
 
         Vec3 look = player.getLookAngle();
         player.setDeltaMovement(look.x * 1.9, 0.75, look.z * 1.9);
-        player.hurtMarked = true;
+        player.syncVelocity = true;
 
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);

@@ -50,7 +50,7 @@ public class LavaRain implements ChargedAbility {
 
     @Override
     public void onChargeStart(ServerPlayer player, BendingData data) {
-        player.displayClientMessage(Component.literal("§6Calling the sky down..."), true);
+        player.sendOverlayMessage(Component.literal("§6Calling the sky down..."));
     }
 
     @Override
@@ -72,6 +72,6 @@ public class LavaRain implements ChargedAbility {
     public void execute(ServerPlayer player, BendingData data) {
         LavaRains.call(player);
 
-        player.displayClientMessage(Component.literal("§cThe sky is falling!"), true);
+        player.sendOverlayMessage(Component.literal("§cThe sky is falling!"));
     }
 }

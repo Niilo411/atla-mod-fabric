@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DripstoneThickness;
+import net.minecraft.world.level.block.state.properties.SpeleothemThickness;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -105,8 +105,8 @@ public class EarthSpike implements Ability {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (surface(player) != null) return true;
 
-        player.displayClientMessage(
-                Component.literal("§6There is no ground there to raise!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6There is no ground there to raise!"));
         return false;
     }
 
@@ -124,7 +124,7 @@ public class EarthSpike implements Ability {
         // earth below is exactly that.
         BlockState tip = Blocks.POINTED_DRIPSTONE.defaultBlockState()
                 .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.UP)
-                .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP);
+                .setValue(PointedDripstoneBlock.THICKNESS, SpeleothemThickness.TIP);
 
         for (int y = 0; y < HEIGHT; y++) {
             BlockState state = (y == HEIGHT - 1) ? tip : earth;

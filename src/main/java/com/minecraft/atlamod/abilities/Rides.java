@@ -103,14 +103,14 @@ public final class Rides {
 
                 for (int y = start; y >= start - (SCAN_UP + SCAN_DOWN); y--) {
                     BlockPos ground = new BlockPos(bx, y, bz);
-                    if (!level.getBlockState(ground).blocksMotion()) continue;
+                    if (!level.getBlockState(ground).isSolid()) continue;
 
                     // A surface is solid WITH SPACE ABOVE IT. That definition is what
                     // stops a scooter walking up sheer walls: every block of a five
                     // block wall has another on top of it, so none qualifies, the
                     // search falls through to the ground the wall stands on, and the
                     // seat bumps into the wall the way it should.
-                    if (!level.getBlockState(ground.above()).blocksMotion()) {
+                    if (!level.getBlockState(ground.above()).isSolid()) {
                         return y + 1.0;
                     }
                 }
@@ -120,8 +120,8 @@ public final class Rides {
             @Override
             boolean stillValid(Ride ride, ServerPlayer rider) {
                 if (ride.seat.isInWater() || overWater(ride.level, ride.seat.position())) {
-                    rider.displayClientMessage(
-                            Component.literal("§bYour Air Scooter cannot cross water!"), true);
+                    rider.sendOverlayMessage(
+                            Component.literal("§bYour Air Scooter cannot cross water!"));
                     return false;
                 }
                 return true;
@@ -157,8 +157,8 @@ public final class Rides {
             boolean stillValid(Ride ride, ServerPlayer rider) {
                 if (Double.isNaN(surfaceAt(ride.level, ride.seat.getX(), ride.seat.getZ(),
                         ride.seat.getY()))) {
-                    rider.displayClientMessage(
-                            Component.literal("§bThere is no water left to surf!"), true);
+                    rider.sendOverlayMessage(
+                            Component.literal("§bThere is no water left to surf!"));
                     return false;
                 }
                 return true;
@@ -195,16 +195,16 @@ public final class Rides {
                 }
 
                 if (ride.submerged) {
-                    rider.displayClientMessage(
-                            Component.literal("§6You surface."), true);
+                    rider.sendOverlayMessage(
+                            Component.literal("§6You surface."));
                     return false;
                 }
 
                 // Still burrowing in from the top. Given a couple of seconds to get
                 // under; a drill that never manages it is pointed at nothing useful.
                 if (ride.ticks > BURROW_GRACE) {
-                    rider.displayClientMessage(
-                            Component.literal("§6You cannot get underground here!"), true);
+                    rider.sendOverlayMessage(
+                            Component.literal("§6You cannot get underground here!"));
                     return false;
                 }
 
@@ -369,8 +369,8 @@ public final class Rides {
         // Already in a boat, on a horse, or riding anything else at all. Stealing the
         // player out of another vehicle is a good way to break whatever put them there.
         if (player.isPassenger()) {
-            player.displayClientMessage(
-                    Component.literal("§bYou cannot do that while riding something else!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§bYou cannot do that while riding something else!"));
             return false;
         }
 
@@ -434,7 +434,7 @@ public final class Rides {
         rider.setDeltaMovement(push.x, Math.max(DIG_EXIT_LIFT, push.y), push.z);
         // A player's client owns their movement and ignores server-side velocity
         // unless it is explicitly pushed to them.
-        rider.hurtMarked = true;
+        rider.syncVelocity = true;
     }
 
     /**
@@ -527,7 +527,7 @@ public final class Rides {
 
         int chiThisTick = perTick(chiRate, ride.ticks);
         if (data.getCurrentChi() < chiThisTick) {
-            rider.displayClientMessage(Component.literal("§bYou are out of Chi."), true);
+            rider.sendOverlayMessage(Component.literal("§bYou are out of Chi."));
             return false;
         }
 
@@ -656,7 +656,7 @@ public final class Rides {
             BlockPos pos = new BlockPos(x, y, z);
 
             if (level.getFluidState(pos).is(FluidTags.WATER)) return true;
-            if (level.getBlockState(pos).blocksMotion()) return false;
+            if (level.getBlockState(pos).isSolid()) return false;
         }
 
         return false;

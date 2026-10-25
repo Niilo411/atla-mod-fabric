@@ -1,5 +1,6 @@
 package com.minecraft.atlamod.abilities.lightning;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.minecraft.atlamod.BendingData;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -95,7 +96,7 @@ public final class Lightning {
      * every time a bender used a movement ability.
      */
     public static void visualStrike(ServerLevel level, Vec3 at) {
-        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+        LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
         if (bolt == null) return;
 
         bolt.snapTo(at.x, at.y, at.z);
@@ -112,7 +113,7 @@ public final class Lightning {
      * lightning behaving normally, and it is what was bought.
      */
     public static void realStrike(ServerLevel level, Vec3 at) {
-        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+        LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
         if (bolt == null) return;
 
         bolt.snapTo(at.x, at.y, at.z);

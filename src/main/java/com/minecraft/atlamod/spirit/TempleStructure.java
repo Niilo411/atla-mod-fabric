@@ -169,7 +169,7 @@ public final class TempleStructure {
 
     /** Which structure belongs in this level. */
     private static StructureTemplate templateFor(WorldGenLevel level) {
-        return templateFor(level.getLevel().getServer().getStructureManager(),
+        return templateFor(level.getLevel().getServer().getStructureTemplateManager(),
                 SpiritWorld.isSpiritWorld(level.getLevel()));
     }
 
@@ -296,7 +296,7 @@ public final class TempleStructure {
     private static BlockPos arrivalFor(StructureTemplate template, BlockPos origin,
                                        SpiritPortalFrame.Frame portal) {
         if (portal == null) {
-            BlockPos size = new BlockPos(template.getSize());
+            BlockPos size = new BlockPos(template.getSize().getX(), template.getSize().getY(), template.getSize().getZ());
             return origin.offset(size.getX() / 2, 1, size.getZ() / 2);
         }
 
@@ -309,7 +309,7 @@ public final class TempleStructure {
 
         // Whichever side is inside the building. Measured against the structure's own
         // bounds rather than by reading the world, which may not be built yet.
-        BlockPos size = new BlockPos(template.getSize());
+        BlockPos size = new BlockPos(template.getSize().getX(), template.getSize().getY(), template.getSize().getZ());
         BoundingBox bounds = new BoundingBox(origin.getX(), origin.getY(), origin.getZ(),
                 origin.getX() + size.getX() - 1,
                 origin.getY() + size.getY() - 1,
@@ -329,7 +329,7 @@ public final class TempleStructure {
         StructureTemplate template = templateFor(level);
         if (template == null) return false;
 
-        BlockPos size = new BlockPos(template.getSize());
+        BlockPos size = new BlockPos(template.getSize().getX(), template.getSize().getY(), template.getSize().getZ());
         BlockPos middle = origin.offset(size.getX() / 2, 1, size.getZ() / 2);
 
         return !level.getBlockState(middle.below()).isAir();
@@ -368,7 +368,7 @@ public final class TempleStructure {
 
         // A generous guess when the template is missing, so a structure with no data still
         // occupies a sane area rather than a single block.
-        BlockPos size = template == null ? new BlockPos(24, 12, 24) : new BlockPos(template.getSize());
+        BlockPos size = template == null ? new BlockPos(24, 12, 24) : new BlockPos(template.getSize().getX(), template.getSize().getY(), template.getSize().getZ());
 
         return new BoundingBox(origin.getX(), origin.getY(), origin.getZ(),
                 origin.getX() + size.getX() - 1,

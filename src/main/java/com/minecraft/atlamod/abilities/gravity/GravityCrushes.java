@@ -86,7 +86,7 @@ public final class GravityCrushes {
         // downward drive is what actually moves them, at exactly the depth's pace.
         Vec3 motion = victim.getDeltaMovement();
         victim.setDeltaMovement(0.0, crushed.cleared < DEPTH ? DRIVE_SPEED : Math.min(0.0, motion.y), 0.0);
-        victim.hurtMarked = true;
+        victim.syncVelocity = true;
         victim.fallDistance = 0.0F;
 
         // Checked EVERY tick rather than in occasional bursts, so there is always

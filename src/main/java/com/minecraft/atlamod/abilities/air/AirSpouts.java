@@ -233,7 +233,7 @@ public final class AirSpouts {
             // server-side velocity unless it is pushed to them. A mob is simulated on
             // the server, so marking it sends a motion packet every tick for nothing.
             if (living instanceof Player) {
-                living.hurtMarked = true;
+                living.syncVelocity = true;
             }
 
             living.fallDistance = 0.0F;

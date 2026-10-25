@@ -1,6 +1,6 @@
 # Atla Mod — Project Context
 
-A Minecraft mod (**Fabric, MC 1.21.11**) featuring elemental bending abilities with
+A Minecraft mod (**Fabric, MC 26.3**) featuring elemental bending abilities with
 a progression/upgrade system. Mod ID: `atlamod`. Base package: `com.minecraft.atlamod`.
 
 This is the Fabric port of the NeoForge 1.21.1 mod in the sibling `atla Mod` folder,
@@ -9,12 +9,15 @@ for the NeoForge build; where a mechanism changed in the port, the note says so.
 
 ## Stack & Architecture
 
-- **Loader:** Fabric Loader 0.18.4 + Fabric API 0.141.6, built with Fabric Loom 1.14
-  using **Mojang's official mappings**, so class and method names are vanilla's own
-  (`Identifier`, `ServerPlayer`, `hurtServer`...) and match the decompiled sources.
-- **Build:** Gradle 9.2.1. Gradle's Groovy cannot run on Java 26, so
-  `gradle/gradle-daemon-jvm.properties` makes Gradle fetch and use a Java 21 for its own
-  daemon; the mod itself targets Java 21 like Minecraft. `gradlew build` makes the jar in
+- **Loader:** Fabric Loader 0.20.1 + Fabric API 0.165.0, built with Fabric Loom 1.19
+  (`net.fabricmc.fabric-loom`). 26.1 onwards ships UNOBFUSCATED, so there is no mappings
+  line and nothing is remapped: class and method names are the game's own (`Identifier`,
+  `ServerPlayer`, `hurtServer`...), plain `implementation` replaces `modImplementation`,
+  and the access widener is in the `official` namespace. The 1.21.11 build is the
+  `master` branch; 26.3 is the `mc-26.3` branch.
+- **Build:** Gradle 9.8.2. Loom 1.19 needs Gradle itself on Java 25 and this machine only
+  has Java 26, so `gradle/gradle-daemon-jvm.properties` makes Gradle fetch and use a
+  Java 25 for its own daemon; the mod targets Java 25 like Minecraft 26.3. `gradlew build` makes the jar in
   `build/libs`, `gradlew runClient` starts the game, `gradlew runGametest` runs the
   automated checks (see "Game tests").
 - **Source sets:** `src/main` is common code, `src/client` is client-only (Loom's split
@@ -115,8 +118,9 @@ The note below about `onPlayerClone` running at LOWEST priority is the same idea
   `atlamod:repairs_spirit_armor`. `SpiritArmor.isSpiritPiece` asks the equipment asset.
 - **Items** need `assets/atlamod/items/<name>.json` model definitions, or they render as
   the missing texture.
-- **Render layers** (cutout fire, translucent portal) are set in `client/BlockRenderLayers`
-  — the `render_type` field NeoForge read from model JSON does not exist in vanilla.
+- **Render layers** (cutout fire, translucent portal) were set in `client/BlockRenderLayers`.
+  **Gone in 26.3**: the layer is now picked from each texture's own transparency, which
+  lands fire on cutout and the portal on translucent with no code at all.
 - **Damage**: `Entity#hurt` is deprecated in favour of the level-taking `hurtServer`.
   Every ability damages through `AbilitySupport.hurt`, the one place that call lives.
 - **Permissions**: `hasPermission(2)` became
@@ -153,6 +157,35 @@ The note below about `onPlayerClone` running at LOWEST priority is the same idea
   BIOME sets under `"attributes"`. `dimension_type/spirit_world.json` now says
   `has_fixed_time` with no day timeline, which leaves every time-driven attribute at its
   default: sun overhead, full sky light, no stars — the old fixed noon.
+
+### What 1.21.11 -> 26.3 changed underneath the mod
+
+- **Messages**: `displayClientMessage(msg, true/false)` is `sendOverlayMessage` / `sendSystemMessage`.
+- **Velocity sync**: `hurtMarked` is `syncVelocity`. `Level.random` is protected: `getRandom()`.
+  `invulnerableTime` is `setInvulnerableTime`; `setInvulnerable` is `setPermanentlyInvulnerable`.
+- **Entity types** live in `EntityTypes`, not `EntityType`. `ChunkPos` is a record (`x()`, `containing`).
+- **Time is a world CLOCK.** No per-level day time: events read `getOverworldClockTime()`, and
+  `/bend event` moves the overworld clock with `server.clockManager().setTotalTicks`.
+- **Villager trades are DATA**: `data/atlamod/villager_trade/<profession>/<scroll>.json`, added to
+  `data/minecraft/tags/villager_trade/<profession>/level_1` and `level_3`. The trade code is gone.
+- **Block codecs are gone** (no `codec()` on blocks). `PushReaction.DESTROY/BLOCK` are `POPPED/IMMOVEABLE`.
+- **Worldgen**: a feature IS its config (`SpiritIslandFeature` is a record registered in
+  `FEATURE_TYPE`, data in `worldgen/feature/`). Biome sources hand out a `BiomeResolver`.
+  Noise settings: `material_rule` replaces `surface_rule`, block states are plain ids, and the
+  router lost its fluid/vein fields. Dimension types need `has_ender_dragon_fight`.
+- **GUI**: `GuiGraphics` is `GuiGraphicsExtractor`; screens override `extractRenderState`;
+  `drawString`/`drawCenteredString`/`renderOutline` are `text`/`centeredText`/`outline`.
+  Screens open through `mc.gui.setScreen`, and the open one is `mc.gui.screen()`.
+- **Input is SDL**: keys are `InputConstants.KEY_*`, and MOUSE BUTTONS CHANGED VALUE (left 1,
+  right 3) — compare against `InputConstants.MOUSE_BUTTON_LEFT/RIGHT`, never a literal.
+- **Rendering**: the GPU API is `com.mojang.renderpearl.api.*`. The sky is one render pass
+  vanilla hands to `renderSunMoonAndStars`; `WorldEventSky` draws into it. Tints are
+  `BlockColorRegistry` with ARGB `BlockTintSource`s.
+- Fabric API renames: `KeyMappingHelper`, `FabricCreativeModeTab`/`CreativeModeTabEvents`,
+  `ServerLevelEvents`, `ServerEntityLevelChangeEvents`, `serverboundPlay`/`clientboundPlay`,
+  `LivingEntityRenderLayerRegistrationCallback`.
+- **Not yet checked in game**: the screens, HUD, sky events and armor layer compile and the
+  client reaches the title screen cleanly, but nobody has looked at them in a world yet.
 
 ### The skies, rebuilt
 
@@ -3092,7 +3125,7 @@ Four commands, covered by the permission gate on the `/bend` root:
 - **Right click an ability node** in the skill tree to pop its upgrades out beside it;
   right click again, or off a node, to close. The panel's left clicks are taken BEFORE
   `super.mouseClicked`, or the node buttons underneath would swallow them. Vanilla
-  `Button` only accepts button 0, so right clicks reach the screen handler untouched.
+  `Button` only accepts the left button, so right clicks reach the screen handler untouched.
 - `BuyUpgradePacket` re-checks everything the menu checked — ability unlocked, upgrade
   real and belonging to that ability, not already owned, levels affordable. The client
   applies the purchase locally for an immediate response, but is not trusted.

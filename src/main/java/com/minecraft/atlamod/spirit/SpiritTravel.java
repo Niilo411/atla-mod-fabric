@@ -65,8 +65,8 @@ public final class SpiritTravel {
         ServerLevel spirit = SpiritWorld.level(server);
         if (spirit == null) {
             if (entity instanceof ServerPlayer player) {
-                player.displayClientMessage(Component.literal(
-                        "§cThe Spirit World is not loaded on this server."), true);
+                player.sendOverlayMessage(Component.literal(
+                        "§cThe Spirit World is not loaded on this server."));
             }
             return;
         }
@@ -120,7 +120,7 @@ public final class SpiritTravel {
     private static void send(Entity entity, ServerLevel destination, BlockPos at) {
         if (!entity.canTeleport(entity.level(), destination)) return;
 
-        Vec3 pos = at.getBottomCenter();
+        Vec3 pos = Vec3.atBottomCenterOf(at);
         Entity arrived = entity.teleport(new TeleportTransition(
                 destination, pos, Vec3.ZERO, entity.getYRot(), entity.getXRot(),
                 TeleportTransition.PLAY_PORTAL_SOUND));

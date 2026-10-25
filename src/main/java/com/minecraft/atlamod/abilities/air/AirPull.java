@@ -135,7 +135,7 @@ public class AirPull implements Ability {
 
             living.setDeltaMovement(toward.x * speed, PULL_LIFT, toward.z * speed);
             // Without this a pulled player's client ignores the server's velocity change.
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
     }
 }

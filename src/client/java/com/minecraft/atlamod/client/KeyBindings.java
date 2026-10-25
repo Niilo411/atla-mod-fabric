@@ -1,9 +1,9 @@
 package com.minecraft.atlamod.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.minecraft.atlamod.Atlamod;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
-import org.lwjgl.glfw.GLFW;
 
 public final class KeyBindings {
     private KeyBindings() {
@@ -16,23 +16,23 @@ public final class KeyBindings {
      */
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Atlamod.id("bending"));
 
-    public static final KeyMapping MEDITATE = new KeyMapping("key.atlamod.meditate", GLFW.GLFW_KEY_M, CATEGORY);
-    public static final KeyMapping ABILITY_1 = new KeyMapping("key.atlamod.ability1", GLFW.GLFW_KEY_Z, CATEGORY);
-    public static final KeyMapping ABILITY_2 = new KeyMapping("key.atlamod.ability2", GLFW.GLFW_KEY_X, CATEGORY);
-    public static final KeyMapping ABILITY_3 = new KeyMapping("key.atlamod.ability3", GLFW.GLFW_KEY_C, CATEGORY);
-    public static final KeyMapping ABILITY_4 = new KeyMapping("key.atlamod.ability4", GLFW.GLFW_KEY_V, CATEGORY);
-    public static final KeyMapping UPGRADE_MENU = new KeyMapping("key.atlamod.upgrade_menu", GLFW.GLFW_KEY_N, CATEGORY);
-    public static final KeyMapping SWITCH_ELEMENT = new KeyMapping("key.atlamod.switch_element", GLFW.GLFW_KEY_Y, CATEGORY);
+    public static final KeyMapping MEDITATE = new KeyMapping("key.atlamod.meditate", InputConstants.KEY_M, CATEGORY);
+    public static final KeyMapping ABILITY_1 = new KeyMapping("key.atlamod.ability1", InputConstants.KEY_Z, CATEGORY);
+    public static final KeyMapping ABILITY_2 = new KeyMapping("key.atlamod.ability2", InputConstants.KEY_X, CATEGORY);
+    public static final KeyMapping ABILITY_3 = new KeyMapping("key.atlamod.ability3", InputConstants.KEY_C, CATEGORY);
+    public static final KeyMapping ABILITY_4 = new KeyMapping("key.atlamod.ability4", InputConstants.KEY_V, CATEGORY);
+    public static final KeyMapping UPGRADE_MENU = new KeyMapping("key.atlamod.upgrade_menu", InputConstants.KEY_N, CATEGORY);
+    public static final KeyMapping SWITCH_ELEMENT = new KeyMapping("key.atlamod.switch_element", InputConstants.KEY_Y, CATEGORY);
 
     // NeoForge's KeyConflictContext.IN_GAME needs no stand-in: vanilla only updates a
     // key mapping's state while no screen is open, so none of these fire in a menu.
     public static void register() {
-        KeyBindingHelper.registerKeyBinding(MEDITATE);
-        KeyBindingHelper.registerKeyBinding(ABILITY_1);
-        KeyBindingHelper.registerKeyBinding(ABILITY_2);
-        KeyBindingHelper.registerKeyBinding(ABILITY_3);
-        KeyBindingHelper.registerKeyBinding(ABILITY_4);
-        KeyBindingHelper.registerKeyBinding(UPGRADE_MENU);
-        KeyBindingHelper.registerKeyBinding(SWITCH_ELEMENT);
+        KeyMappingHelper.registerKeyMapping(MEDITATE);
+        KeyMappingHelper.registerKeyMapping(ABILITY_1);
+        KeyMappingHelper.registerKeyMapping(ABILITY_2);
+        KeyMappingHelper.registerKeyMapping(ABILITY_3);
+        KeyMappingHelper.registerKeyMapping(ABILITY_4);
+        KeyMappingHelper.registerKeyMapping(UPGRADE_MENU);
+        KeyMappingHelper.registerKeyMapping(SWITCH_ELEMENT);
     }
 }

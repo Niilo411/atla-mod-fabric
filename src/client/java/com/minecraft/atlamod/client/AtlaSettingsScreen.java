@@ -1,5 +1,6 @@
 package com.minecraft.atlamod.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import com.minecraft.atlamod.AtlaConfig;
 import com.minecraft.atlamod.BendingData;
@@ -11,7 +12,7 @@ import com.minecraft.atlamod.abilities.ElementPaths;
 import com.minecraft.atlamod.abilities.PassiveAbility;
 import com.minecraft.atlamod.spirit.island.IslandFamily;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -745,10 +746,10 @@ public class AtlaSettingsScreen extends Screen {
      * everything else, so it covers the buttons whatever order this method runs in.
      */
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         graphics.fill(0, 0, this.width, this.height, 0xD0101010);
 
-        graphics.drawCenteredString(this.font, "Atla Mod Settings", this.width / 2, 12, 0xFFFFFFFF);
+        graphics.centeredText(this.font, "Atla Mod Settings", this.width / 2, 12, 0xFFFFFFFF);
 
         drawTabs(graphics);
 
@@ -759,14 +760,14 @@ public class AtlaSettingsScreen extends Screen {
 
         String blocked = blockedReason();
         if (blocked != null) {
-            graphics.drawCenteredString(this.font, "§e" + blocked, this.width / 2, top + 2, 0xFFFFFFFF);
+            graphics.centeredText(this.font, "§e" + blocked, this.width / 2, top + 2, 0xFFFFFFFF);
             top += 14;
         }
 
         // A window too short to hold a list at all. Bailing out here rather than pushing
         // an inside-out scissor rectangle, which is not a shape the clip stack expects.
         if (bottom <= top) {
-            super.render(graphics, mouseX, mouseY, partialTick);
+            super.extractRenderState(graphics, mouseX, mouseY, partialTick);
             return;
         }
 
@@ -793,7 +794,7 @@ public class AtlaSettingsScreen extends Screen {
 
         drawScrollbar(graphics, right + 6, top, bottom, y + scroll - top);
 
-        super.render(graphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
         if (hovered != null && hovered.tooltip() != null) {
             graphics.setComponentTooltipForNextFrame(this.font,
@@ -830,14 +831,14 @@ public class AtlaSettingsScreen extends Screen {
         return lines;
     }
 
-    private void drawTabs(GuiGraphics graphics) {
+    private void drawTabs(GuiGraphicsExtractor graphics) {
         for (int i = 0; i < TAB_NAMES.length; i++) {
             boolean selected = activeTab == i;
             int tx = tabX(i);
 
             graphics.fill(tx, TAB_Y, tx + TAB_W, TAB_Y + TAB_H, selected ? 0xFF448844 : 0xFF222222);
-            graphics.renderOutline(tx, TAB_Y, TAB_W, TAB_H, selected ? 0xFF55FF55 : 0xFF555555);
-            graphics.drawCenteredString(this.font, TAB_NAMES[i], tx + TAB_W / 2, TAB_Y + 6, 0xFFFFFFFF);
+            graphics.outline(tx, TAB_Y, TAB_W, TAB_H, selected ? 0xFF55FF55 : 0xFF555555);
+            graphics.centeredText(this.font, TAB_NAMES[i], tx + TAB_W / 2, TAB_Y + 6, 0xFFFFFFFF);
         }
     }
 
@@ -848,7 +849,7 @@ public class AtlaSettingsScreen extends Screen {
      * tab is well over a hundred rows, and with no bar the only clue that more exists is
      * trying the wheel.
      */
-    private void drawScrollbar(GuiGraphics graphics, int x, int top, int bottom, int total) {
+    private void drawScrollbar(GuiGraphicsExtractor graphics, int x, int top, int bottom, int total) {
         int view = bottom - top;
         if (total <= view) return;
 
@@ -882,7 +883,7 @@ public class AtlaSettingsScreen extends Screen {
         double mouseY = event.y();
         int button = event.button();
 
-        if (button == 0) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
             for (int i = 0; i < TAB_NAMES.length; i++) {
                 int tx = tabX(i);
                 if (mouseX >= tx && mouseX <= tx + TAB_W && mouseY >= TAB_Y && mouseY <= TAB_Y + TAB_H) {
@@ -1056,7 +1057,7 @@ public class AtlaSettingsScreen extends Screen {
     @Override
     public void onClose() {
         save();
-        this.minecraft.setScreen(parent);
+        this.minecraft.gui.setScreen(parent);
     }
 
     @Override
@@ -1075,7 +1076,7 @@ public class AtlaSettingsScreen extends Screen {
             this.height = height;
         }
 
-        abstract void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY);
+        abstract void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY);
 
         boolean click(int left, int right, int y, double mouseX, double mouseY) {
             return false;
@@ -1101,8 +1102,8 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
-            graphics.drawString(AtlaSettingsScreen.this.font, title, left, y + 6, COLOUR_HEADER);
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
+            graphics.text(AtlaSettingsScreen.this.font, title, left, y + 6, COLOUR_HEADER);
             graphics.fill(left, y + 17, right, y + 18, 0xFF404040);
         }
     }
@@ -1117,8 +1118,8 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
-            graphics.drawString(AtlaSettingsScreen.this.font, text, left, y + 1, COLOUR_NOTE);
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
+            graphics.text(AtlaSettingsScreen.this.font, text, left, y + 1, COLOUR_NOTE);
         }
     }
 
@@ -1149,18 +1150,18 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
             String name = element.substring(0, 1).toUpperCase(Locale.ROOT) + element.substring(1);
 
-            graphics.drawString(AtlaSettingsScreen.this.font,
+            graphics.text(AtlaSettingsScreen.this.font,
                     name + "bending", left, y + 7, COLOUR_HEADER);
 
             int bx = right - 70;
             boolean off = allOff();
 
             graphics.fill(bx, y + 4, bx + 70, y + 18, 0xFF222222);
-            graphics.renderOutline(bx, y + 4, 70, 14, 0xFF666666);
-            graphics.drawCenteredString(AtlaSettingsScreen.this.font,
+            graphics.outline(bx, y + 4, 70, 14, 0xFF666666);
+            graphics.centeredText(AtlaSettingsScreen.this.font,
                     off ? "Enable all" : "Disable all", bx + 35, y + 7, 0xFFDDDDDD);
 
             graphics.fill(left, y + 19, right, y + 20, 0xFF404040);
@@ -1210,18 +1211,18 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
             boolean on = current();
             boolean editable = editable();
 
-            graphics.drawString(AtlaSettingsScreen.this.font, label, left + 4, y + 5,
+            graphics.text(AtlaSettingsScreen.this.font, label, left + 4, y + 5,
                     editable ? COLOUR_LABEL : COLOUR_OFF_TEXT);
 
             int bx = right - TOGGLE_W;
 
             graphics.fill(bx, y + 2, bx + TOGGLE_W, y + 16, on ? 0xFF1E3A1E : 0xFF3A1E1E);
-            graphics.renderOutline(bx, y + 2, TOGGLE_W, 14, on ? 0xFF55FF55 : 0xFFFF5555);
-            graphics.drawCenteredString(AtlaSettingsScreen.this.font, on ? "Yes" : "No",
+            graphics.outline(bx, y + 2, TOGGLE_W, 14, on ? 0xFF55FF55 : 0xFFFF5555);
+            graphics.centeredText(AtlaSettingsScreen.this.font, on ? "Yes" : "No",
                     bx + TOGGLE_W / 2, y + 5, on ? 0xFF99FF99 : 0xFFFF9999);
         }
 
@@ -1256,25 +1257,25 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
             boolean on = !disabled.contains(ability);
             boolean tuned = tuning.containsKey(ability.toLowerCase(Locale.ROOT));
 
             if (tunable) {
-                graphics.drawString(AtlaSettingsScreen.this.font,
+                graphics.text(AtlaSettingsScreen.this.font,
                         expanded.contains(ability) ? "v" : ">", left + 2, y + 4, COLOUR_NOTE);
             }
 
             // Gold for an ability whose figures have been changed, so a tuned one can be
             // found without opening every row.
             int colour = !on ? COLOUR_OFF_TEXT : tuned ? 0xFFFFCC55 : COLOUR_LABEL;
-            graphics.drawString(AtlaSettingsScreen.this.font, ability, left + 12, y + 4, colour);
+            graphics.text(AtlaSettingsScreen.this.font, ability, left + 12, y + 4, colour);
 
             int bx = right - TOGGLE_W;
 
             graphics.fill(bx, y + 1, bx + TOGGLE_W, y + 14, on ? 0xFF1E3A1E : 0xFF3A1E1E);
-            graphics.renderOutline(bx, y + 1, TOGGLE_W, 13, on ? 0xFF55FF55 : 0xFFFF5555);
-            graphics.drawCenteredString(AtlaSettingsScreen.this.font, on ? "On" : "Off",
+            graphics.outline(bx, y + 1, TOGGLE_W, 13, on ? 0xFF55FF55 : 0xFFFF5555);
+            graphics.centeredText(AtlaSettingsScreen.this.font, on ? "On" : "Off",
                     bx + TOGGLE_W / 2, y + 3, on ? 0xFF99FF99 : 0xFFFF9999);
         }
 
@@ -1379,17 +1380,17 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
             boolean on = editable();
             int shown = current();
 
-            graphics.drawString(AtlaSettingsScreen.this.font, label, labelX(left), y + 7,
+            graphics.text(AtlaSettingsScreen.this.font, label, labelX(left), y + 7,
                     on ? COLOUR_LABEL : COLOUR_OFF_TEXT);
 
             int barX = right - SLIDER_BAR_W;
 
             graphics.fill(barX, y + 4, barX + SLIDER_BAR_W, y + 18, 0xFF0A0A0A);
-            graphics.renderOutline(barX, y + 4, SLIDER_BAR_W, 14, on ? 0xFF888888 : 0xFF444444);
+            graphics.outline(barX, y + 4, SLIDER_BAR_W, 14, on ? 0xFF888888 : 0xFF444444);
 
             // The filled part is the value, so the bar reads at a glance even before the
             // number underneath it is.
@@ -1399,7 +1400,7 @@ public class AtlaSettingsScreen extends Screen {
                 graphics.fill(barX + 1, y + 5, barX + 1 + filled, y + 17, on ? 0xFF2A4A6A : 0xFF2A2A2A);
             }
 
-            graphics.drawCenteredString(AtlaSettingsScreen.this.font, readout.apply(shown),
+            graphics.centeredText(AtlaSettingsScreen.this.font, readout.apply(shown),
                     barX + SLIDER_BAR_W / 2, y + 7, on ? 0xFFFFFFFF : 0xFF888888);
         }
 
@@ -1450,12 +1451,12 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
             super.render(graphics, left, right, y, mouseX, mouseY);
 
             // Repainted over the plain label so a changed figure stands out.
             if (current() != shipped) {
-                graphics.drawString(AtlaSettingsScreen.this.font, label, labelX(left), y + 7,
+                graphics.text(AtlaSettingsScreen.this.font, label, labelX(left), y + 7,
                         editable() ? 0xFFFFCC55 : COLOUR_OFF_TEXT);
             }
 
@@ -1464,12 +1465,12 @@ public class AtlaSettingsScreen extends Screen {
             drawNudge(graphics, barX - NUDGE_W - 2, y, "+");
         }
 
-        private void drawNudge(GuiGraphics graphics, int x, int y, String sign) {
+        private void drawNudge(GuiGraphicsExtractor graphics, int x, int y, String sign) {
             boolean on = editable();
 
             graphics.fill(x, y + 4, x + NUDGE_W, y + 18, 0xFF222222);
-            graphics.renderOutline(x, y + 4, NUDGE_W, 14, on ? 0xFF888888 : 0xFF444444);
-            graphics.drawCenteredString(AtlaSettingsScreen.this.font, sign, x + NUDGE_W / 2, y + 7,
+            graphics.outline(x, y + 4, NUDGE_W, 14, on ? 0xFF888888 : 0xFF444444);
+            graphics.centeredText(AtlaSettingsScreen.this.font, sign, x + NUDGE_W / 2, y + 7,
                     on ? 0xFFFFFFFF : 0xFF888888);
         }
 
@@ -1503,14 +1504,14 @@ public class AtlaSettingsScreen extends Screen {
         }
 
         @Override
-        void render(GuiGraphics graphics, int left, int right, int y, int mouseX, int mouseY) {
+        void render(GuiGraphicsExtractor graphics, int left, int right, int y, int mouseX, int mouseY) {
             boolean tuned = tuning.containsKey(ability.toLowerCase(Locale.ROOT));
             boolean on = editable() && tuned;
             int bx = right - SLIDER_BAR_W;
 
             graphics.fill(bx, y + 3, bx + SLIDER_BAR_W, y + 16, 0xFF222222);
-            graphics.renderOutline(bx, y + 3, SLIDER_BAR_W, 13, on ? 0xFF888888 : 0xFF444444);
-            graphics.drawCenteredString(AtlaSettingsScreen.this.font,
+            graphics.outline(bx, y + 3, SLIDER_BAR_W, 13, on ? 0xFF888888 : 0xFF444444);
+            graphics.centeredText(AtlaSettingsScreen.this.font,
                     tuned ? "Restore defaults" : "Using defaults",
                     bx + SLIDER_BAR_W / 2, y + 6, on ? 0xFFDDDDDD : 0xFF777777);
 

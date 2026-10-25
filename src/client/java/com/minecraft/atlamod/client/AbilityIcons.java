@@ -1,6 +1,6 @@
 package com.minecraft.atlamod.client;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -37,7 +37,7 @@ import java.util.Map;
 public final class AbilityIcons {
 
     /**
-     * The side length an ItemStack renders at, which is fixed by GuiGraphics#renderItem.
+     * The side length an ItemStack renders at, which is fixed by GuiGraphicsExtractor#renderItem.
      *
      * Everything here is scaled from this figure, exactly as the PNG version scaled from
      * its 256. Kept as a constant because it is the game's number rather than ours, and
@@ -123,7 +123,7 @@ public final class AbilityIcons {
         // ------------------------------------------------------------------
         // LIGHTNING
         // ------------------------------------------------------------------
-        put("Lightning redirection", Items.LIGHTNING_ROD);
+        put("Lightning redirection", Items.LIGHTNING_ROD.weathering().unaffected());
         put("Lightning aura", Items.REDSTONE);
         put("Lightning Jump", Items.ENDER_PEARL);
         put("Lightning Strength", Items.REDSTONE_BLOCK);
@@ -166,7 +166,7 @@ public final class AbilityIcons {
         put("Tough knuckles", Items.IRON_INGOT);
         put("Bullets", Items.IRON_NUGGET);                // twenty little slugs
         put("Stone walls", Items.COBBLESTONE_WALL);
-        put("Armor pierce", Items.LIGHTNING_ROD);         // a thrown metal rod
+        put("Armor pierce", Items.LIGHTNING_ROD.weathering().unaffected());         // a thrown metal rod
 
         // ------------------------------------------------------------------
         // COMBUSTION
@@ -227,7 +227,7 @@ public final class AbilityIcons {
      * Scaled in two dimensions only: since 1.21.6 an item is rendered into its own
      * texture first and then drawn as a flat quad, so there is no depth left to squash.
      */
-    public static void draw(GuiGraphics graphics, String ability, int x, int y, int size) {
+    public static void draw(GuiGraphicsExtractor graphics, String ability, int x, int y, int size) {
         Item item = ICONS.get(ability.toLowerCase(Locale.ROOT));
         if (item == null) return;
 
@@ -237,7 +237,7 @@ public final class AbilityIcons {
         graphics.pose().translate(x, y);
         graphics.pose().scale(scale, scale);
 
-        graphics.renderItem(new ItemStack(item), 0, 0);
+        graphics.item(new ItemStack(item), 0, 0);
 
         graphics.pose().popMatrix();
     }

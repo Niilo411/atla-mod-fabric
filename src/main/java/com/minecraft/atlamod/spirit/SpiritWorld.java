@@ -196,7 +196,7 @@ public final class SpiritWorld {
                 from, TEMPLE_SEARCH_CHUNKS, false);
         if (locate == null) return null;
 
-        net.minecraft.world.level.ChunkPos chunkPos = new net.minecraft.world.level.ChunkPos(locate);
+        net.minecraft.world.level.ChunkPos chunkPos = net.minecraft.world.level.ChunkPos.containing(locate);
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
 

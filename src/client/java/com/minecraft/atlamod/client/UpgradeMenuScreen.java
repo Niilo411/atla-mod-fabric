@@ -1,10 +1,11 @@
 package com.minecraft.atlamod.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import com.minecraft.atlamod.BendingData;
 import com.minecraft.atlamod.ModAttachments;
 import com.minecraft.atlamod.network.EquipAbilityPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -155,7 +156,7 @@ public class UpgradeMenuScreen extends Screen {
         // without backing all the way out to the Mods list. Bottom left, clear of the
         // tree's bottom arm, which grows down the middle.
         settingsButton = Button.builder(Component.literal("Settings"),
-                        b -> this.minecraft.setScreen(new AtlaSettingsScreen(this)))
+                        b -> this.minecraft.gui.setScreen(new AtlaSettingsScreen(this)))
                 .bounds(8, this.height - 28, 70, 20).build();
         this.addRenderableWidget(settingsButton);
 
@@ -196,7 +197,7 @@ public class UpgradeMenuScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.fill(0, 0, this.width, this.height, (int) 0xD0101010L);
 
         if (this.minecraft != null && this.minecraft.player != null) {
@@ -217,18 +218,18 @@ public class UpgradeMenuScreen extends Screen {
             // tab's own content so it sits on top of it.
             if (activeTab == 1) {
                 renderEquipMenu(guiGraphics, mouseX, mouseY, data);
-                super.render(guiGraphics, mouseX, mouseY, partialTick);
+                super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
             } else if (activeTab == 2) {
                 renderPassiveMenu(guiGraphics, mouseX, mouseY, data);
-                super.render(guiGraphics, mouseX, mouseY, partialTick);
+                super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
             } else {
-                super.render(guiGraphics, mouseX, mouseY, partialTick);
+                super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
                 String centerText = activeElement.isEmpty() ? "None" : activeElement.substring(0, 1).toUpperCase() + activeElement.substring(1);
                 // Under the tabs rather than in the middle of the tree: an element
                 // with a CENTRE ability has a node sitting exactly where this used to
                 // be drawn, and the two would overlap.
-                guiGraphics.drawCenteredString(this.font, centerText,
+                guiGraphics.centeredText(this.font, centerText,
                         this.width / 2, TAB_Y + TAB_H + 6, 0xFFFFFFFF);
 
                 int playerLevel = data.getLevel();
@@ -294,7 +295,7 @@ public class UpgradeMenuScreen extends Screen {
                         guiGraphics.fillGradient(bx, by, bx + bw, by + bh,
                                 pathColor(node.path(), isUnlocked, true),
                                 pathColor(node.path(), isUnlocked, false));
-                        guiGraphics.renderOutline(bx, by, bw, bh, borderColor);
+                        guiGraphics.outline(bx, by, bw, bh, borderColor);
 
                         // A vanilla item stands in for the ability's picture — see
                         // AbilityIcons. The "?" stays as the fallback for anything the
@@ -315,7 +316,7 @@ public class UpgradeMenuScreen extends Screen {
                                 AbilityIcons.draw(guiGraphics, node.name(),
                                         bx + ICON_INSET, by + ICON_INSET, bw - ICON_INSET * 2);
                             } else {
-                                guiGraphics.drawCenteredString(this.font, "?",
+                                guiGraphics.centeredText(this.font, "?",
                                         bx + (bw / 2), by + (bh / 2) - 4, 0xFF888888);
                             }
 
@@ -371,7 +372,7 @@ public class UpgradeMenuScreen extends Screen {
         }
     }
 
-    private void renderEquipMenu(GuiGraphics graphics, int mouseX, int mouseY, BendingData data) {
+    private void renderEquipMenu(GuiGraphicsExtractor graphics, int mouseX, int mouseY, BendingData data) {
         int centerX = this.width / 2;
 
         // 1. Draw the 8 Keybind slots, labelled with whatever the player has these
@@ -384,8 +385,8 @@ public class UpgradeMenuScreen extends Screen {
             int y = 50 + (row * 45);
 
             graphics.fill(x, y, x + 70, y + 40, 0xFF333333);
-            graphics.renderOutline(x, y, 70, 40, 0xFF555555);
-            graphics.drawCenteredString(this.font, slotLabels[i], x + 35, y + 4, 0xFFAAAAAA);
+            graphics.outline(x, y, 70, 40, 0xFF555555);
+            graphics.centeredText(this.font, slotLabels[i], x + 35, y + 4, 0xFFAAAAAA);
 
             String equipped = data.getEquippedAbility(i);
             if (!equipped.isEmpty()) {
@@ -393,7 +394,7 @@ public class UpgradeMenuScreen extends Screen {
             }
         }
 
-        graphics.drawCenteredString(this.font, "--- Unlocked Abilities (" + data.getActiveElement().toUpperCase() + ") ---", centerX, 145, 0xFFAAAAAA);
+        graphics.centeredText(this.font, "--- Unlocked Abilities (" + data.getActiveElement().toUpperCase() + ") ---", centerX, 145, 0xFFAAAAAA);
 
         // 2. Unlocked abilities for this element, passives excluded
         java.util.List<String> displayAbilities = equippableAbilities(data);
@@ -415,14 +416,14 @@ public class UpgradeMenuScreen extends Screen {
             boolean selected = ability.equals(selectedAbilityToEquip);
 
             graphics.fill(ax, ay, ax + 70, ay + 20, selected ? SELECTED_FILL : ROW_FILL);
-            graphics.renderOutline(ax, ay, 70, 20, selected ? SELECTED_BORDER : ROW_BORDER);
+            graphics.outline(ax, ay, 70, 20, selected ? SELECTED_BORDER : ROW_BORDER);
             drawFitted(graphics, ability, ax + 35, ay + 6, 66, 0xFFFFFFFF);
         }
 
         // Only worth saying once something is waiting to be placed, so the line doubles as
         // part of the selection feedback rather than being permanent furniture.
         if (selectedAbilityToEquip != null && !selectedAbilityToEquip.isEmpty()) {
-            graphics.drawCenteredString(this.font,
+            graphics.centeredText(this.font,
                     "§bLeft click a slot to bind §f" + selectedAbilityToEquip
                             + "§b, right click a slot to clear",
                     centerX, 155, 0xFFFFFFFF);
@@ -456,12 +457,12 @@ public class UpgradeMenuScreen extends Screen {
 
             // Left clicks inside an open panel belong to it, and must be taken before
             // super() hands the click to the node buttons underneath.
-            if (button == 0 && upgradePanelClicked(mouseX, mouseY, treeData)) {
+            if (button == InputConstants.MOUSE_BUTTON_LEFT && upgradePanelClicked(mouseX, mouseY, treeData)) {
                 return true;
             }
 
             // Right click a node to pop its upgrades out, or to close them again.
-            if (button == 1) {
+            if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
                 for (var entry : nodeMap.entrySet()) {
                     var nodeButton = entry.getKey();
                     if (mouseX < nodeButton.getX() || mouseX > nodeButton.getX() + nodeButton.getWidth()
@@ -505,7 +506,7 @@ public class UpgradeMenuScreen extends Screen {
 
                 if (mouseX >= x && mouseX <= x + 70 && mouseY >= y && mouseY <= y + 40) {
                     // RIGHT CLICK: Clear/remove the ability from this slot
-                    if (button == 1) {
+                    if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
                         data.setEquippedAbility(i, "");
                         this.minecraft.player.setAttached(ModAttachments.BENDING_DATA, data);
 
@@ -820,12 +821,12 @@ public class UpgradeMenuScreen extends Screen {
      * arbitrary box. Anything still too wide at the minimum scale is cut and given an
      * ellipsis, so the row is never wider than the thing it is labelling.
      */
-    private void drawFitted(GuiGraphics graphics, String text, int centerX, int y,
+    private void drawFitted(GuiGraphicsExtractor graphics, String text, int centerX, int y,
                             int maxWidth, int colour) {
         int width = this.font.width(text);
 
         if (width <= maxWidth) {
-            graphics.drawCenteredString(this.font, text, centerX, y, colour);
+            graphics.centeredText(this.font, text, centerX, y, colour);
             return;
         }
 
@@ -843,7 +844,7 @@ public class UpgradeMenuScreen extends Screen {
         graphics.pose().translate(centerX, y);
         graphics.pose().scale(scale, scale);
 
-        graphics.drawString(this.font, shown, -this.font.width(shown) / 2, 0, colour);
+        graphics.text(this.font, shown, -this.font.width(shown) / 2, 0, colour);
 
         graphics.pose().popMatrix();
     }
@@ -857,7 +858,7 @@ public class UpgradeMenuScreen extends Screen {
     /**
      * Draws the tab strip, ABOVE everything the tree puts under it.
      *
-     * The lift is load-bearing rather than tidiness. GuiGraphics#renderItem pushes an item
+     * The lift is load-bearing rather than tidiness. GuiGraphicsExtractor#renderItem pushes an item
      * icon to z=150 of its own accord, where the old "?" was ordinary text at z=0 and went
      * quietly under the tabs — so once nodes started wearing items, a node reaching up
      * into the strip punched straight through it. That is not rare: the top arm's fourth
@@ -875,7 +876,7 @@ public class UpgradeMenuScreen extends Screen {
      * everything before it however the batches are ordered — which is what the old lift
      * to z=300 did. Tooltips are drawn in a later stratum still, so they keep covering it.
      */
-    private void drawTabs(GuiGraphics graphics) {
+    private void drawTabs(GuiGraphicsExtractor graphics) {
         graphics.nextStratum();
 
         for (int i = 0; i < TAB_NAMES.length; i++) {
@@ -883,8 +884,8 @@ public class UpgradeMenuScreen extends Screen {
             int tx = tabX(i);
 
             graphics.fill(tx, TAB_Y, tx + TAB_W, TAB_Y + TAB_H, selected ? 0xFF448844 : 0xFF222222);
-            graphics.renderOutline(tx, TAB_Y, TAB_W, TAB_H, selected ? 0xFF55FF55 : 0xFF555555);
-            graphics.drawCenteredString(this.font, TAB_NAMES[i], tx + (TAB_W / 2), TAB_Y + 6, 0xFFFFFFFF);
+            graphics.outline(tx, TAB_Y, TAB_W, TAB_H, selected ? 0xFF55FF55 : 0xFF555555);
+            graphics.centeredText(this.font, TAB_NAMES[i], tx + (TAB_W / 2), TAB_Y + 6, 0xFFFFFFFF);
         }
     }
 
@@ -962,10 +963,10 @@ public class UpgradeMenuScreen extends Screen {
         return found;
     }
 
-    private void renderPassiveMenu(GuiGraphics graphics, int mouseX, int mouseY, BendingData data) {
+    private void renderPassiveMenu(GuiGraphicsExtractor graphics, int mouseX, int mouseY, BendingData data) {
         int centerX = this.width / 2;
 
-        graphics.drawCenteredString(this.font,
+        graphics.centeredText(this.font,
                 "Equipped passives work as soon as they are slotted", centerX, 44, 0xFFAAAAAA);
 
         // The four slots.
@@ -977,9 +978,9 @@ public class UpgradeMenuScreen extends Screen {
             boolean filled = !equipped.isEmpty();
 
             graphics.fill(sx, sy, sx + 70, sy + 40, filled ? 0xFF3A2A1A : 0xFF222222);
-            graphics.renderOutline(sx, sy, 70, 40, filled ? 0xFFFFAA33 : 0xFF555555);
+            graphics.outline(sx, sy, 70, 40, filled ? 0xFFFFAA33 : 0xFF555555);
 
-            graphics.drawCenteredString(this.font, "Slot " + (i + 1), sx + 35, sy + 5, 0xFFAAAAAA);
+            graphics.centeredText(this.font, "Slot " + (i + 1), sx + 35, sy + 5, 0xFFAAAAAA);
             drawFitted(graphics, filled ? equipped : "- empty -",
                     sx + 35, sy + 20, 66, filled ? 0xFFFFCC66 : 0xFF666666);
         }
@@ -987,12 +988,12 @@ public class UpgradeMenuScreen extends Screen {
         // Names what is actually waiting once something is picked, the same way the ability
         // tab does — the two lists are the same control and should read the same.
         if (selectedPassiveToEquip != null && !selectedPassiveToEquip.isEmpty()) {
-            graphics.drawCenteredString(this.font,
+            graphics.centeredText(this.font,
                     "§bLeft click a slot to equip §f" + selectedPassiveToEquip
                             + "§b, right click a slot to clear",
                     centerX, 108, 0xFFFFFFFF);
         } else {
-            graphics.drawCenteredString(this.font,
+            graphics.centeredText(this.font,
                     "Left click a passive to select it, right click a slot to clear",
                     centerX, 108, 0xFF888888);
         }
@@ -1000,7 +1001,7 @@ public class UpgradeMenuScreen extends Screen {
         // The passives the player owns.
         java.util.List<String> available = unlockedPassives(data);
         if (available.isEmpty()) {
-            graphics.drawCenteredString(this.font,
+            graphics.centeredText(this.font,
                     "No passive abilities unlocked yet", centerX, 140, 0xFF888888);
             drawTabs(graphics);
             return;
@@ -1019,7 +1020,7 @@ public class UpgradeMenuScreen extends Screen {
             // same thing in the same colour. See SELECTED_BORDER.
             boolean selected = passive.equals(selectedPassiveToEquip);
             graphics.fill(ax, ay, ax + 70, ay + 20, selected ? SELECTED_FILL : ROW_FILL);
-            graphics.renderOutline(ax, ay, 70, 20, selected ? SELECTED_BORDER : ROW_BORDER);
+            graphics.outline(ax, ay, 70, 20, selected ? SELECTED_BORDER : ROW_BORDER);
             drawFitted(graphics, passive, ax + 35, ay + 6, 66, 0xFFFFFFFF);
 
             // Hovering shows what the passive actually does.
@@ -1047,7 +1048,7 @@ public class UpgradeMenuScreen extends Screen {
             int sy = 60;
             if (mouseX < sx || mouseX > sx + 70 || mouseY < sy || mouseY > sy + 40) continue;
 
-            if (button == 1) {
+            if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
                 applyPassive(i, "", data);
                 return true;
             }
@@ -1169,7 +1170,7 @@ public class UpgradeMenuScreen extends Screen {
     }
 
 
-    private void renderUpgradePanel(GuiGraphics graphics, int mouseX, int mouseY, BendingData data) {
+    private void renderUpgradePanel(GuiGraphicsExtractor graphics, int mouseX, int mouseY, BendingData data) {
         net.minecraft.client.gui.components.Button node = openUpgradeButton();
         if (node == null) return;
 
@@ -1182,12 +1183,12 @@ public class UpgradeMenuScreen extends Screen {
         // at six percent — enough for an ability node's art to sit visibly under the
         // upgrade text. A popup over a busy screen has no reason to be translucent.
         graphics.fill(px, py, px + UPGRADE_PANEL_W, py + height, 0xFF101010);
-        graphics.renderOutline(px, py, UPGRADE_PANEL_W, height, 0xFF6688AA);
-        graphics.drawCenteredString(this.font, "§bUpgrades",
+        graphics.outline(px, py, UPGRADE_PANEL_W, height, 0xFF6688AA);
+        graphics.centeredText(this.font, "§bUpgrades",
                 px + UPGRADE_PANEL_W / 2, py + 6, 0xFFFFFFFF);
 
         if (upgrades.isEmpty()) {
-            graphics.drawCenteredString(this.font, "§7None",
+            graphics.centeredText(this.font, "§7None",
                     px + UPGRADE_PANEL_W / 2, py + 26, 0xFFFFFFFF);
             return;
         }
@@ -1207,16 +1208,16 @@ public class UpgradeMenuScreen extends Screen {
             int border = owned ? 0xFF55FF55 : (affordable ? 0xFF6688AA : 0xFF663333);
 
             graphics.fill(px + 4, ry, px + UPGRADE_PANEL_W - 4, ry + UPGRADE_ROW_H - 4, fill);
-            graphics.renderOutline(px + 4, ry, UPGRADE_PANEL_W - 8, UPGRADE_ROW_H - 4, border);
+            graphics.outline(px + 4, ry, UPGRADE_PANEL_W - 8, UPGRADE_ROW_H - 4, border);
 
-            graphics.drawString(this.font, upgrade.name(), px + 9, ry + 4, 0xFFFFFFFF);
+            graphics.text(this.font, upgrade.name(), px + 9, ry + 4, 0xFFFFFFFF);
 
             String status = owned ? "§aOwned"
                     : !abilityOwned ? "§8Unlock the ability first"
                     : locked ? "§8Buy " + requiredName(upgrade) + " first"
                     : (affordable ? "§6Click - Lvl " + upgrade.cost()
                                   : "§cRequires Lvl " + upgrade.cost());
-            graphics.drawString(this.font, status, px + 9, ry + 15, 0xFFFFFFFF);
+            graphics.text(this.font, status, px + 9, ry + 15, 0xFFFFFFFF);
 
             if (hovered) {
                 graphics.setTooltipForNextFrame(this.font,

@@ -78,8 +78,8 @@ public class FleshShield implements Ability {
     @Override
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (FleshShields.candidates(player).isEmpty()) {
-            player.displayClientMessage(Component.literal(
-                    "There is nobody to take.").withStyle(ChatFormatting.DARK_RED), true);
+            player.sendOverlayMessage(Component.literal(
+                    "There is nobody to take.").withStyle(ChatFormatting.DARK_RED));
             return false;
         }
 

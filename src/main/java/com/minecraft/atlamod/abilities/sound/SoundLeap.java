@@ -77,7 +77,7 @@ public class SoundLeap implements ChargedAbility {
         double speed = speedForDistance(DISTANCE);
 
         player.setDeltaMovement(heading.x * speed, speed * LIFT, heading.z * speed);
-        player.hurtMarked = true;
+        player.syncVelocity = true;
 
         // Air jump's fall protection, reused whole: the countdown, the left-ground
         // guard and the LivingFallEvent cancel are all already there and correct.

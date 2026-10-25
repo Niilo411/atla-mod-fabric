@@ -134,7 +134,7 @@ public final class Aiming {
         BlockPos from = BlockPos.containing(end);
         for (int i = 0; i <= groundScan; i++) {
             BlockPos below = from.below(i);
-            if (level.getBlockState(below).blocksMotion()) {
+            if (level.getBlockState(below).isSolid()) {
                 return Vec3.atBottomCenterOf(below.above());
             }
         }

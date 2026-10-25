@@ -1,7 +1,10 @@
 package com.minecraft.atlamod.client;
 
 import com.minecraft.atlamod.Atlamod;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
+import net.minecraft.client.color.block.BlockTintSources;
+
+import java.util.List;
 
 /**
  * What makes the spirit portal BLUE without a texture of our own.
@@ -23,12 +26,14 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 public final class SpiritPortalColors {
 
     /** Multiplied onto the purple nether portal texture to land on blue. */
-    private static final int BLUE = 0x3060FF;
+    private static final int BLUE = 0xFF3060FF;
 
     private SpiritPortalColors() {
     }
 
     public static void register() {
-        ColorProviderRegistry.BLOCK.register((state, level, pos, tintIndex) -> BLUE, Atlamod.SPIRIT_PORTAL);
+        // Since 26.1 a block's tints are a list of SOURCES, one per tint index, and their
+        // colours are ARGB, so BLUE carries a full alpha byte.
+        BlockColorRegistry.register(List.of(BlockTintSources.constant(BLUE)), Atlamod.SPIRIT_PORTAL);
     }
 }

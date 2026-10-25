@@ -156,7 +156,7 @@ public final class WorldEvents {
         if (level == null) return false;
         if (!enabled(event)) return false;
 
-        long time = level.getDayTime();
+        long time = level.getOverworldClockTime();
 
         // The right day of the cycle — every third, sixth or twelfth. Counted so that the
         // first of each falls a little way in rather than on a brand new world's first
@@ -180,7 +180,7 @@ public final class WorldEvents {
     public static float progress(Level level, Event event) {
         if (!isActive(level, event)) return 0.0F;
 
-        long into = within(level.getDayTime(), event) - startWithin(event);
+        long into = within(level.getOverworldClockTime(), event) - startWithin(event);
 
         return into / (float) length(event);
     }

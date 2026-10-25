@@ -1,13 +1,13 @@
 package com.minecraft.atlamod.spirit.island;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 
 import java.util.Random;
 
@@ -31,17 +31,20 @@ import java.util.Random;
  * WHAT GOES WHERE IS NOT DECIDED HERE. SpiritIslands owns that, because the biome source
  * has to reach the identical conclusion — see its class note.
  */
-public class SpiritIslandFeature extends Feature<NoneFeatureConfiguration> {
+// Since 26.1 a feature IS its configuration: no separate config class, and the codec it
+// is registered by (in FEATURE_TYPE) reads the feature itself. Having no settings at all,
+// this one is a unit.
+public record SpiritIslandFeature() implements Feature {
 
-    public SpiritIslandFeature(Codec<NoneFeatureConfiguration> codec) {
-        super(codec);
+    public static final MapCodec<SpiritIslandFeature> CODEC = MapCodec.unit(SpiritIslandFeature::new);
+
+    @Override
+    public MapCodec<SpiritIslandFeature> codec() {
+        return CODEC;
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        WorldGenLevel level = context.level();
-        BlockPos origin = context.origin();
-
+    public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
         int chunkMinX = origin.getX();
         int chunkMinZ = origin.getZ();
 

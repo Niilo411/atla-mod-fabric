@@ -92,14 +92,14 @@ public class ChiBlock implements Ability {
     @Override
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (ChiBlocks.hasMark(player)) {
-            player.displayClientMessage(Component.literal(
-                    "§cYou are already tracking someone."), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§cYou are already tracking someone."));
             return false;
         }
 
         if (Aiming.nearestAlongLook(player, REACH, TOLERANCE) == null) {
-            player.displayClientMessage(Component.literal(
-                    "§cNobody within reach."), true);
+            player.sendOverlayMessage(Component.literal(
+                    "§cNobody within reach."));
             return false;
         }
         return true;

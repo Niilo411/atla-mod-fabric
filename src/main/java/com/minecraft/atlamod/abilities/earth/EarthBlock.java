@@ -83,8 +83,8 @@ public class EarthBlock implements TwoPhaseAbility {
 
         if (target(player) != null) return true;
 
-        player.displayClientMessage(
-                Component.literal("§6No block in reach to pull!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6No block in reach to pull!"));
         return false;
     }
 

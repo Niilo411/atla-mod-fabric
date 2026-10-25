@@ -1,6 +1,5 @@
 package com.minecraft.atlamod;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -34,8 +33,6 @@ public class BendingFireBlock extends BaseFireBlock {
     public static final BooleanProperty BLUE = BooleanProperty.create("blue");
     public static final BooleanProperty STACKED = BooleanProperty.create("stacked");
 
-    public static final MapCodec<BendingFireBlock> CODEC = simpleCodec(BendingFireBlock::new);
-
     /** How often a stacked block checks that its base is still burning. */
     private static final int CHECK_INTERVAL = 40;
 
@@ -47,11 +44,6 @@ public class BendingFireBlock extends BaseFireBlock {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(BLUE, Boolean.FALSE)
                 .setValue(STACKED, Boolean.FALSE));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseFireBlock> codec() {
-        return CODEC;
     }
 
     @Override

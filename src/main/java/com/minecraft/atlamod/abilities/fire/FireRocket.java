@@ -82,8 +82,8 @@ public class FireRocket implements Ability {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (data.getCurrentChi() >= CHI_PER_SECOND) return true;
 
-        player.displayClientMessage(net.minecraft.network.chat.Component.literal(
-                "§cNot enough Chi! (Requires " + CHI_PER_SECOND + ")"), true);
+        player.sendOverlayMessage(net.minecraft.network.chat.Component.literal(
+                "§cNot enough Chi! (Requires " + CHI_PER_SECOND + ")"));
         return false;
     }
 
@@ -187,7 +187,7 @@ public class FireRocket implements Ability {
         player.setDeltaMovement(
                 player.getDeltaMovement().x, LIFT_OFF, player.getDeltaMovement().z);
         // Players ignore server-side velocity unless it is explicitly pushed to them.
-        player.hurtMarked = true;
+        player.syncVelocity = true;
     }
 
     /**

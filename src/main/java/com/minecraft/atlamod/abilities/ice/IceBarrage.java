@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.properties.DripstoneThickness;
+import net.minecraft.world.level.block.state.properties.SpeleothemThickness;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
@@ -123,8 +123,8 @@ public class IceBarrage implements ChargedAbility {
             // Scattered by area rather than by radius: picking a uniform radius would
             // bunch every barrage around the bender, since a ring at r=30 holds far
             // more ground than one at r=3. The square root spreads them evenly.
-            double angle = level.random.nextDouble() * Math.PI * 2.0;
-            double distance = Math.sqrt(level.random.nextDouble()) * RADIUS;
+            double angle = level.getRandom().nextDouble() * Math.PI * 2.0;
+            double distance = Math.sqrt(level.getRandom().nextDouble()) * RADIUS;
 
             Vec3 from = centre.add(
                     Math.cos(angle) * distance,
@@ -181,20 +181,20 @@ public class IceBarrage implements ChargedAbility {
         // Shuffled and then taken from the front, so the few that are singled out are
         // drawn without replacement — six DISTINCT targets at most, never the same one
         // counted twice against the cap.
-        java.util.Collections.shuffle(inRange, new java.util.Random(level.random.nextLong()));
+        java.util.Collections.shuffle(inRange, new java.util.Random(level.getRandom().nextLong()));
 
-        int singledOut = Math.min(inRange.size(), level.random.nextInt(AIMED_TARGETS_MAX + 1));
+        int singledOut = Math.min(inRange.size(), level.getRandom().nextInt(AIMED_TARGETS_MAX + 1));
 
         for (LivingEntity living : inRange.subList(0, singledOut)) {
-            int count = AIMED_MIN + level.random.nextInt(AIMED_MAX - AIMED_MIN + 1);
+            int count = AIMED_MIN + level.getRandom().nextInt(AIMED_MAX - AIMED_MIN + 1);
 
             for (int i = 0; i < count; i++) {
                 // Spread across the target rather than stacked in one column, so a
                 // handful reads as several icicles coming down on it.
                 Vec3 from = living.position().add(
-                        (level.random.nextDouble() - 0.5) * 0.6,
+                        (level.getRandom().nextDouble() - 0.5) * 0.6,
                         living.getBbHeight() + AIMED_DROP,
-                        (level.random.nextDouble() - 0.5) * 0.6);
+                        (level.getRandom().nextDouble() - 0.5) * 0.6);
 
                 BendingProjectiles.launch(player, from, new Vec3(0.0, -1.0, 0.0), aimed);
             }
@@ -224,7 +224,7 @@ public class IceBarrage implements ChargedAbility {
         IceWorks.freeze(level, base,
                 Blocks.POINTED_DRIPSTONE.defaultBlockState()
                         .setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
-                        .setValue(PointedDripstoneBlock.THICKNESS, DripstoneThickness.TIP),
+                        .setValue(PointedDripstoneBlock.THICKNESS, SpeleothemThickness.TIP),
                 STAND_TICKS);
 
         Ice.shatter(level, at, 20, 0.4);

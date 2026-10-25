@@ -190,7 +190,7 @@ public class WindTunnel implements ChanneledAbility {
         // server-side velocity unless it is pushed to them. A mob is simulated on the
         // server, so marking it would send a motion packet every tick for nothing.
         if (living instanceof Player) {
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
     }
 

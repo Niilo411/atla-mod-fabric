@@ -156,7 +156,7 @@ public final class FleshShields {
             for (LivingEntity body : alive) {
                 // Invulnerability frames would swallow most of this otherwise, since
                 // the whole wall is being hit at once with the same figure.
-                body.invulnerableTime = 0;
+                body.setInvulnerableTime(0);
                 com.minecraft.atlamod.abilities.AbilitySupport.hurt(body, player.damageSources().indirectMagic(player, player), each);
                 Blood.wrench(shield.level, body, 6);
             }
@@ -243,7 +243,7 @@ public final class FleshShields {
         if (body.position().distanceToSqr(spot) > SNAP_TOLERANCE * SNAP_TOLERANCE) {
             body.teleportTo(spot.x, spot.y, spot.z);
         }
-        body.hurtMarked = true;
+        body.syncVelocity = true;
     }
 
     /** Lets the bodies go. */

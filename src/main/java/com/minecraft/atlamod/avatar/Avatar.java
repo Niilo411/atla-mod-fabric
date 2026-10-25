@@ -251,7 +251,7 @@ public class Avatar {
             if (avoid != null && candidates.size() > 1) candidates.remove(avoid);
 
             if (!candidates.isEmpty()) {
-                grant(server, candidates.get(server.overworld().random.nextInt(candidates.size())));
+                grant(server, candidates.get(server.overworld().getRandom().nextInt(candidates.size())));
                 return true;
             }
 

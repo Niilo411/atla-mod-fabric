@@ -111,7 +111,7 @@ public final class GravityPulls {
         // A player's own client decides where they are; the velocity only reaches it if
         // it is pushed. A mob is simulated here, so marking it would be a packet a tick
         // for nothing — the same distinction wind tunnel draws.
-        if (target instanceof ServerPlayer) target.hurtMarked = true;
+        if (target instanceof ServerPlayer) target.syncVelocity = true;
 
         return true;
     }
@@ -120,7 +120,7 @@ public final class GravityPulls {
     private static void stop(LivingEntity target) {
         Vec3 motion = target.getDeltaMovement();
         target.setDeltaMovement(0.0, Math.min(0.0, motion.y), 0.0);
-        if (target instanceof ServerPlayer) target.hurtMarked = true;
+        if (target instanceof ServerPlayer) target.syncVelocity = true;
     }
 
     /** Called on death, logout and dimension change — as owner or as target. */

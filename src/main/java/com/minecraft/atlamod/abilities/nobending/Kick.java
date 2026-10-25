@@ -133,7 +133,7 @@ public class Kick implements Ability {
             living.setDeltaMovement(away.x * PUSH_SPEED, PUSH_LIFT, away.z * PUSH_SPEED);
 
             // Without this a kicked PLAYER's own client ignores the server's velocity.
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
     }
 }

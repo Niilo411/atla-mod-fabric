@@ -172,7 +172,7 @@ public final class SpiritGravity {
      */
     private static void announce(LivingEntity entity, String message) {
         if (entity instanceof ServerPlayer server) {
-            server.displayClientMessage(Component.literal(message), true);
+            server.sendOverlayMessage(Component.literal(message));
         }
     }
 }

@@ -70,7 +70,7 @@ public class BassBounce implements Ability {
         double launch = com.minecraft.atlamod.abilities.air.AirJump.speedForHeight(HOP_HEIGHT);
 
         player.setDeltaMovement(player.getDeltaMovement().x, launch, player.getDeltaMovement().z);
-        player.hurtMarked = true;
+        player.syncVelocity = true;
 
         data.setBassBounceTicks(AIR_TIME);
         data.setBassBounceLeftGround(false);
@@ -101,7 +101,7 @@ public class BassBounce implements Ability {
             if (player.getDeltaMovement().y < 0.1 && data.hasBassBounceLeftGround()) {
                 player.setDeltaMovement(
                         player.getDeltaMovement().x, SLAM_SPEED, player.getDeltaMovement().z);
-                player.hurtMarked = true;
+                player.syncVelocity = true;
             }
             return;
         }
@@ -141,7 +141,7 @@ public class BassBounce implements Ability {
             // AFTER the damage: hurt() applies its own knockback, so setting the
             // motion first would have the throw quietly overwritten by a smaller one.
             living.setDeltaMovement(living.getDeltaMovement().x, bounce, living.getDeltaMovement().z);
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
 
         // The bender does not pay for their own hop.

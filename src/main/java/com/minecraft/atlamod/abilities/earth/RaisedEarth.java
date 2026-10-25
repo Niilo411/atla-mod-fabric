@@ -104,8 +104,8 @@ public abstract class RaisedEarth implements ChanneledAbility {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (!surfaces(player).isEmpty()) return true;
 
-        player.displayClientMessage(
-                Component.literal("§6There is no ground here to raise!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6There is no ground here to raise!"));
         return false;
     }
 

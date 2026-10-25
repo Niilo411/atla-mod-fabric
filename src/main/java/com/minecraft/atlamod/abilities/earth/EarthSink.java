@@ -85,8 +85,8 @@ public class EarthSink implements Ability {
             return true;
         }
 
-        player.displayClientMessage(
-                Component.literal("§6There is no ground here to open!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6There is no ground here to open!"));
         return false;
     }
 

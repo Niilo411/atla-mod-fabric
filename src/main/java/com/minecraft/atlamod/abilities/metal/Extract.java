@@ -99,7 +99,7 @@ public class Extract implements ChanneledAbility {
         // behaviour for a full inventory.
         ItemStack raw = new ItemStack(Items.RAW_IRON);
         if (!player.getInventory().add(raw)) {
-            player.drop(raw, false);
+            player.drop(raw, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
 
         Metal.spark(level, player.position(), 8, 0.4);

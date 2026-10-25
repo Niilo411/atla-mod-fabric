@@ -3,7 +3,7 @@ package com.minecraft.atlamod.client;
 import com.minecraft.atlamod.BendingData;
 import com.minecraft.atlamod.ModAttachments;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -33,13 +33,13 @@ public class ModHudOverlay {
 
             // --- DRAW ELEMENT ICON ---
             guiGraphics.fill(x, y, x + iconSize, y + iconSize, 0xFF222222);
-            guiGraphics.renderOutline(x, y, iconSize, iconSize, 0xFF555555);
+            guiGraphics.outline(x, y, iconSize, iconSize, 0xFF555555);
 
             if (ElementIcons.has(activeElement)) {
                 // Inset by a pixel so the emblem sits inside the border, not on it.
                 ElementIcons.draw(guiGraphics, activeElement, x + 1, y + 1, iconSize - 2);
             } else {
-                guiGraphics.drawCenteredString(mc.font, "?",
+                guiGraphics.centeredText(mc.font, "?",
                         x + (iconSize / 2), y + (iconSize / 2) - 4, 0xFF888888);
             }
 
@@ -47,7 +47,7 @@ public class ModHudOverlay {
             int textStartX = x + iconSize + 8;
 
             // Element Name
-            guiGraphics.drawString(mc.font, displayText, textStartX, y + 4, 0xFFFFFFFF);
+            guiGraphics.text(mc.font, displayText, textStartX, y + 4, 0xFFFFFFFF);
 
             // Level and XP nested right next to the element name.
             //
@@ -65,14 +65,14 @@ public class ModHudOverlay {
                     + "/" + com.minecraft.atlamod.abilities.AbilitySupport.xpPerLevel();
             int statsX = textStartX + Math.max(50, mc.font.width(displayText) + 8);
 
-            guiGraphics.drawString(mc.font, statsText, statsX, y + 4, 0xFF55FF55);
+            guiGraphics.text(mc.font, statsText, statsX, y + 4, 0xFF55FF55);
 
             // The switch-element hotkey hint, read live off the KeyMapping rather than
             // a hardcoded "Y" — a player who rebinds it in Controls sees their OWN key
             // here, not the default one.
             String switchHint = "[" + com.minecraft.atlamod.client.KeyBindings.SWITCH_ELEMENT
                     .getTranslatedKeyMessage().getString() + "] Switch";
-            guiGraphics.drawString(mc.font, switchHint, x, y + iconSize + 4, 0xFFAAAAAA);
+            guiGraphics.text(mc.font, switchHint, x, y + iconSize + 4, 0xFFAAAAAA);
         }
         // 2. Draw the Chi Bar above health hearts.
         //
@@ -111,7 +111,7 @@ public class ModHudOverlay {
 
             // Draw Chi Text (Centered above the bar)
             String chiText = currentChi + "/" + maxChi;
-            guiGraphics.drawString(mc.font, chiText, barX + (barWidth / 2) - (mc.font.width(chiText) / 2), barY - 9, 0xFFFFFFFF);
+            guiGraphics.text(mc.font, chiText, barX + (barWidth / 2) - (mc.font.width(chiText) / 2), barY - 9, 0xFFFFFFFF);
         }
         // 3. Charge meter, top centre — Fireball's wind-up and its ready-to-throw state
         if (ClientChargeState.isActive()) {
@@ -128,13 +128,13 @@ public class ModHudOverlay {
             guiGraphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF222222);
             guiGraphics.fill(barX, barY, barX + filled, barY + barHeight,
                     ClientChargeState.armed ? 0xFFFFCC22 : 0xFFFF6622);
-            guiGraphics.renderOutline(barX, barY, barWidth, barHeight, 0xFF000000);
+            guiGraphics.outline(barX, barY, barWidth, barHeight, 0xFF000000);
 
             String label = ClientChargeState.armed
                     ? "§e" + ClientChargeState.ability + " ready — left click to throw"
                     : "§6" + ClientChargeState.ability + " charging...";
 
-            guiGraphics.drawString(mc.font, label,
+            guiGraphics.text(mc.font, label,
                     (screenWidth / 2) - (mc.font.width(label) / 2), barY - 11, 0xFFFFFFFF);
         }
 
@@ -143,11 +143,11 @@ public class ModHudOverlay {
         //     level still accumulates and simply is not shown.
         if (data.hasPassiveEquipped(com.minecraft.atlamod.abilities.blood.BloodStrength.KEY)) {
             String bloodText = "Blood Lvl: " + data.getBloodLevel();
-            guiGraphics.drawString(mc.font, bloodText, 8, 8, 0xFFCC2222);
+            guiGraphics.text(mc.font, bloodText, 8, 8, 0xFFCC2222);
 
             String bloodXp = data.getBloodXp() + "/"
                     + com.minecraft.atlamod.abilities.blood.Blood.xpPerLevel();
-            guiGraphics.drawString(mc.font, bloodXp, 8, 19, 0xFF883333);
+            guiGraphics.text(mc.font, bloodXp, 8, 19, 0xFF883333);
         }
 
         // 4. Avatar lives, top right. Only drawn for the Avatar, so it costs nothing
@@ -159,7 +159,7 @@ public class ModHudOverlay {
             int titleWidth = mc.font.width(title);
             int right = screenWidth - 8;
 
-            guiGraphics.drawString(mc.font, title, right - titleWidth, 8, 0xFFFFAA00);
+            guiGraphics.text(mc.font, title, right - titleWidth, 8, 0xFFFFAA00);
 
             // A heart per life, drawn with the VANILLA heart sprites rather than as
             // a text glyph: they are the game's own idiom for "lives left", they
@@ -189,7 +189,7 @@ public class ModHudOverlay {
             if (mc.player.isAlive()
                     && mc.player.getHealth() < com.minecraft.atlamod.avatar.Avatar.LOW_HEALTH) {
                 String status = "Avatar State Active";
-                guiGraphics.drawString(mc.font, status,
+                guiGraphics.text(mc.font, status,
                         right - mc.font.width(status), 20 + heartSize + 3, 0xFF66CCFF);
             }
         }

@@ -94,6 +94,6 @@ public class WaterSurf implements Ability {
     public void execute(ServerPlayer player, BendingData data) {
         if (!Rides.start(player, Rides.Kind.WATER_SURF, SWIFT_CURRENT)) return;
 
-        player.displayClientMessage(Component.literal("§bYou ride the surface."), true);
+        player.sendOverlayMessage(Component.literal("§bYou ride the surface."));
     }
 }

@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:iron_block",
+    "count": 4
+  },
+  "gives": {
+    "id": "atlamod:metal_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}

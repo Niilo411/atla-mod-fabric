@@ -62,8 +62,8 @@ public class Meteor implements ChargedAbility, TwoPhaseAbility {
     public void execute(ServerPlayer player, BendingData data) {
         MeteorBlocks.summon(player);
 
-        player.displayClientMessage(Component.literal(
-                "§5Meteor gathered — left click to throw"), true);
+        player.sendOverlayMessage(Component.literal(
+                "§5Meteor gathered — left click to throw"));
     }
 
     @Override

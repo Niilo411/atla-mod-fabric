@@ -175,8 +175,8 @@ public final class SpiritShrines {
      */
     public static BlockPos originIn(ChunkPos chunk, Vec3i size) {
         for (BlockPos origin : originsNear(chunk.getMiddleBlockX(), chunk.getMiddleBlockZ(), 8, size)) {
-            if (SectionPos.blockToSectionCoord(origin.getX()) == chunk.x
-                    && SectionPos.blockToSectionCoord(origin.getZ()) == chunk.z) {
+            if (SectionPos.blockToSectionCoord(origin.getX()) == chunk.x()
+                    && SectionPos.blockToSectionCoord(origin.getZ()) == chunk.z()) {
                 return origin;
             }
         }
@@ -393,7 +393,7 @@ public final class SpiritShrines {
     public static boolean isShrine(ServerLevel level, BlockPos pos) {
         if (!SpiritWorld.isSpiritWorld(level)) return false;
 
-        StructureTemplate template = templateFor(level.getServer().getStructureManager());
+        StructureTemplate template = templateFor(level.getServer().getStructureTemplateManager());
         if (template == null) return false;
 
         BlockPos marker = markerOffset(template);
@@ -466,7 +466,7 @@ public final class SpiritShrines {
     // ------------------------------------------------------------------
 
     private static StructureTemplate templateFor(WorldGenLevel level) {
-        return templateFor(level.getLevel().getServer().getStructureManager());
+        return templateFor(level.getLevel().getServer().getStructureTemplateManager());
     }
 
     public static StructureTemplate templateFor(StructureTemplateManager templates) {

@@ -231,7 +231,7 @@ public final class Tsunamis {
             // Carried along with the wave rather than merely hurt by it.
             Vec3 push = wave.forward.scale(0.9);
             living.setDeltaMovement(push.x, 0.45, push.z);
-            living.hurtMarked = true;
+            living.syncVelocity = true;
         }
 
         wave.level.sendParticles(ParticleTypes.SPLASH,

@@ -1,6 +1,6 @@
 package com.minecraft.atlamod.client;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 
 import java.util.Map;
@@ -51,7 +51,7 @@ public final class ElementIcons {
      * on its own. Scaling here means the PNG can stay whatever resolution it was
      * drawn at instead of having to match every place it appears.
      */
-    public static void draw(GuiGraphics graphics, String element, int x, int y, int size) {
+    public static void draw(GuiGraphicsExtractor graphics, String element, int x, int y, int size) {
         Identifier icon = ICONS.get(element.toLowerCase());
         if (icon == null) return;
 

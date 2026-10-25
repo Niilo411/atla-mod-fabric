@@ -25,14 +25,14 @@ public class ModNetworking {
     private static <T extends CustomPacketPayload> void server(CustomPacketPayload.Type<T> type,
                                                                StreamCodec<? super FriendlyByteBuf, T> codec,
                                                                BiConsumer<T, IPayloadContext> handler) {
-        PayloadTypeRegistry.playC2S().register(type, codec);
+        PayloadTypeRegistry.serverboundPlay().register(type, codec);
         ServerPlayNetworking.registerGlobalReceiver(type,
                 (payload, context) -> handler.accept(payload, IPayloadContext.of(context.player())));
     }
 
     private static <T extends CustomPacketPayload> void toClient(CustomPacketPayload.Type<T> type,
                                                                  StreamCodec<? super FriendlyByteBuf, T> codec) {
-        PayloadTypeRegistry.playS2C().register(type, codec);
+        PayloadTypeRegistry.clientboundPlay().register(type, codec);
     }
 
     public static void register() {

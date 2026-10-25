@@ -93,8 +93,8 @@ public class Drown implements ChargedAbility {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (findVictim(player) != null) return true;
 
-        player.displayClientMessage(
-                Component.literal("§bNo target in sight!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§bNo target in sight!"));
         return false;
     }
 

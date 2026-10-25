@@ -130,8 +130,8 @@ public final class LavaRains {
         // Scattered by AREA, not by radius: picking a uniform radius bunches everything
         // near the middle, since a ring at r=15 holds five times the ground of one at
         // r=3. The square root spreads them evenly. Same trick Ice barrage uses.
-        double angle = storm.level.random.nextDouble() * Math.PI * 2.0;
-        double distance = Math.sqrt(storm.level.random.nextDouble()) * RADIUS;
+        double angle = storm.level.getRandom().nextDouble() * Math.PI * 2.0;
+        double distance = Math.sqrt(storm.level.getRandom().nextDouble()) * RADIUS;
 
         Vec3 from = storm.centre.add(
                 Math.cos(angle) * distance, SKY, Math.sin(angle) * distance);

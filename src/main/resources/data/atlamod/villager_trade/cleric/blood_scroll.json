@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:rabbit_foot",
+    "count": 5
+  },
+  "gives": {
+    "id": "atlamod:blood_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}

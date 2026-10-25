@@ -132,8 +132,8 @@ public class Mine implements ChargedAbility {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (target(player, data) != null) return true;
 
-        player.displayClientMessage(
-                Component.literal("§6Nothing in reach to mine!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6Nothing in reach to mine!"));
         return false;
     }
 

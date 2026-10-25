@@ -77,8 +77,8 @@ public class EarthTrap implements Ability {
     public boolean canStart(ServerPlayer player, BendingData data) {
         if (!Aiming.allInSight(player, RANGE, CONE_DOT).isEmpty()) return true;
 
-        player.displayClientMessage(
-                Component.literal("§6Nobody in sight to trap!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6Nobody in sight to trap!"));
         return false;
     }
 

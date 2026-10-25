@@ -1,7 +1,7 @@
 package com.minecraft.atlamod.client;
 
 import com.minecraft.atlamod.network.ElementChoicePacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -108,7 +108,7 @@ public class ElementSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         // NO BACKGROUND HERE. Since 1.21.6 vanilla draws it before render() is called, in a
         // layer of its own, and its blur only reaches what is below that layer — so the old
         // trap (the blur smearing whatever had already been drawn, title included) is gone,
@@ -116,10 +116,10 @@ public class ElementSelectionScreen extends Screen {
         // once.
 
         // Draw the title text at the top
-        guiGraphics.drawCenteredString(this.font, "Choose Your Path", this.width / 2, this.height / 2 - 90, 0xFFFFFFFF);
+        guiGraphics.centeredText(this.font, "Choose Your Path", this.width / 2, this.height / 2 - 90, 0xFFFFFFFF);
 
         // The widgets.
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         // --- DRAW ICON PLACEHOLDERS & TOOLTIPS ---
         for (Button button : elementButtonMap.keySet()) {
@@ -133,13 +133,13 @@ public class ElementSelectionScreen extends Screen {
 
                 // Draw dark background box and border
                 guiGraphics.fill(bx, by, bx + bw, by + bh, 0xFF222222);
-                guiGraphics.renderOutline(bx, by, bw, bh, 0xFF555555);
+                guiGraphics.outline(bx, by, bw, bh, 0xFF555555);
 
                 if (ElementIcons.has(element)) {
                     // Inset by a pixel so the emblem sits inside the border, not on it.
                     ElementIcons.draw(guiGraphics, element, bx + 1, by + 1, bw - 2);
                 } else {
-                    guiGraphics.drawCenteredString(this.font, "?",
+                    guiGraphics.centeredText(this.font, "?",
                             bx + (bw / 2), by + (bh / 2) - 4, 0xFF888888);
                 }
 

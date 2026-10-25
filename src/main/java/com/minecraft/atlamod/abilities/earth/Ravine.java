@@ -71,8 +71,8 @@ public class Ravine implements Ability {
             return true;
         }
 
-        player.displayClientMessage(
-                Component.literal("§6There is no ground here to tear open!"), true);
+        player.sendOverlayMessage(
+                Component.literal("§6There is no ground here to tear open!"));
         return false;
     }
 

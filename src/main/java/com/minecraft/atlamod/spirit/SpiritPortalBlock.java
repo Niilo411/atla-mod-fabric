@@ -1,6 +1,5 @@
 package com.minecraft.atlamod.spirit;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -45,8 +44,6 @@ import java.util.Set;
  */
 public class SpiritPortalBlock extends Block {
 
-    public static final MapCodec<SpiritPortalBlock> CODEC = simpleCodec(SpiritPortalBlock::new);
-
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
 
     /**
@@ -79,11 +76,6 @@ public class SpiritPortalBlock extends Block {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(AXIS, Direction.Axis.X)
                 .setValue(ISLAND, false));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

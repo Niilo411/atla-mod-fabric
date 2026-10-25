@@ -71,14 +71,14 @@ public class EarthDig implements Ability {
         if (Rides.isRiding(player)) return false;
 
         if (player.getLookAngle().y > DOWNWARD_AIM) {
-            player.displayClientMessage(
-                    Component.literal("§6Look down at the ground to dig!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§6Look down at the ground to dig!"));
             return false;
         }
 
         if (!solidBelow(player)) {
-            player.displayClientMessage(
-                    Component.literal("§6There is no ground here to dig into!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§6There is no ground here to dig into!"));
             return false;
         }
 

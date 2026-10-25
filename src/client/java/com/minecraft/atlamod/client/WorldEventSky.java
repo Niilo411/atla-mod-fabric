@@ -2,25 +2,27 @@ package com.minecraft.atlamod.client;
 
 import com.minecraft.atlamod.Atlamod;
 import com.minecraft.atlamod.events.WorldEvents;
-import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
-import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.GpuSampler;
-import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.buffers.GpuBufferSlice;
+import com.mojang.renderpearl.api.commands.RenderPass;
+import com.mojang.renderpearl.api.pipeline.BlendFactor;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.textures.GpuSampler;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
+import com.mojang.renderpearl.api.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -35,9 +37,6 @@ import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
 
 /**
  * What the three world events look like.
@@ -142,17 +141,24 @@ public final class WorldEventSky {
      * Where the texture is bright the sky goes black, where it is black the sky is
      * untouched, and in between it feathers — exactly how to take back out something that
      * was put in additively.
+     *
+     * Built exactly as 26.3 builds RenderPipelines.CELESTIAL, bind groups and all, with only
+     * the blend changed. No depth state at all, which is how vanilla's sky pipelines say
+     * "neither test nor write depth".
      */
     private static final RenderPipeline SUBTRACT_CELESTIAL = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+                    .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+                    .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
                     .withLocation(Atlamod.id("pipeline/subtract_celestial"))
                     .withVertexShader("core/position_tex")
                     .withFragmentShader("core/position_tex")
-                    .withSampler("Sampler0")
-                    .withBlend(new BlendFunction(SourceFactor.ZERO, DestFactor.ONE_MINUS_SRC_COLOR,
-                            SourceFactor.ZERO, DestFactor.ONE))
-                    .withDepthWrite(false)
-                    .withVertexFormat(DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS)
+                    .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
+                    .withColorTargetState(new ColorTargetState(new BlendFunction(
+                            BlendFactor.ZERO, BlendFactor.ONE_MINUS_SRC_COLOR,
+                            BlendFactor.ZERO, BlendFactor.ONE)))
+                    .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX)
+                    .withPrimitiveTopology(PrimitiveTopology.QUADS)
                     .build());
 
     /** Built on first use and kept: the same comet, sun and stars every frame. */
@@ -185,20 +191,24 @@ public final class WorldEventSky {
 
     /**
      * Draws the comet and the eclipse onto the sky, straight after vanilla's sun, moon and
-     * stars.
+     * stars, into vanilla's OWN sky pass.
+     *
+     * Since 26.1 the whole sky is one render pass that vanilla opens, hands to each piece
+     * and closes; borrowing it is simpler than opening one of our own and lands everything
+     * in exactly the target and order vanilla's sun uses.
      *
      * @param sunAngle        vanilla's own celestial rotation for the sun, in radians
      * @param rainBrightness  1 under a clear sky, 0 in a downpour — vanilla's own figure.
      *                        Rain hides the comet exactly as it hides the sun and moon;
      *                        without that it would burn cheerfully through a thunderstorm.
      */
-    public static void renderEvents(float sunAngle, float rainBrightness) {
+    public static void renderEvents(RenderPass pass, float sunAngle, float rainBrightness) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
 
         // Underwater vanilla still draws the sky, but fog swallows it — the NeoForge build
         // drew nothing here, and neither does this.
-        if (mc.gameRenderer.getMainCamera().getFluidInCamera() != FogType.NONE) return;
+        if (mc.gameRenderer.mainCamera().getFluidInCamera() != FogType.NONE) return;
 
         float eclipse = WorldEvents.eclipseDepth(mc.level);
         boolean comet = WorldEvents.isActive(mc.level, WorldEvents.Event.SOZINS_COMET);
@@ -208,24 +218,24 @@ public final class WorldEventSky {
             PoseStack pose = new PoseStack();
             // Tilted away from the zenith FIRST and then swung around the compass — the
             // other way round would swing the tilt itself.
-            pose.mulPose(Axis.YP.rotationDegrees(COMET_COMPASS));
-            pose.mulPose(Axis.XP.rotationDegrees(COMET_TILT));
-            drawComet(pose.last().pose(), rainBrightness);
+            pose.rotateDegrees(Axis.YP, COMET_COMPASS);
+            pose.rotateDegrees(Axis.XP, COMET_TILT);
+            drawComet(pass, pose.last().pose(), rainBrightness);
         }
 
         if (eclipse > 0.0F) {
             // VANILLA'S OWN CELESTIAL FRAME, the same two rotations its sun is drawn in, so
             // everything here lands on the sun and turns with the day the same way.
             PoseStack pose = new PoseStack();
-            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            pose.mulPose(Axis.XP.rotation(sunAngle));
+            pose.rotateDegrees(Axis.YP, -90.0F);
+            pose.rotate(Axis.XP, sunAngle);
             Matrix4f celestial = pose.last().pose();
 
             // STARS FIRST, so taking the sun out also takes out any star behind it rather
             // than leaving it shining through the black disc.
             float depth = eclipse * rainBrightness;
-            drawEclipseStars(celestial, depth);
-            drawBlackSun(celestial, depth);
+            drawEclipseStars(pass, celestial, depth);
+            drawBlackSun(pass, celestial, depth);
         }
     }
 
@@ -234,11 +244,11 @@ public final class WorldEventSky {
     // ==========================================================================
 
     /** The comet: ADDED to the sky with vanilla's sun blend, so it glows rather than covering. */
-    private static void drawComet(Matrix4f pose, float alpha) {
+    private static void drawComet(RenderPass pass, Matrix4f pose, float alpha) {
         if (cometQuad == null) cometQuad = buildQuad("Atla comet quad", 0.0F, 0.0F, 1.0F, 1.0F);
 
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(COMET);
-        draw("Atla comet", RenderPipelines.CELESTIAL, cometQuad, 6, pose, COMET_SIZE,
+        draw(pass, "Atla comet", RenderPipelines.CELESTIAL, cometQuad, pose, COMET_SIZE,
                 new Vector4f(1.0F, 1.0F, 1.0F, alpha), texture.getTextureView(), texture.getSampler());
     }
 
@@ -247,14 +257,14 @@ public final class WorldEventSky {
      * the moon has crossed it. Nothing is added in its place — what is left is the black of
      * the darkened sky, and the faint halo the subtraction leaves reads as corona.
      */
-    private static void drawBlackSun(Matrix4f pose, float depth) {
+    private static void drawBlackSun(RenderPass pass, Matrix4f pose, float depth) {
         TextureAtlas atlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.CELESTIALS);
         if (sunQuad == null) {
             TextureAtlasSprite sun = atlas.getSprite(Identifier.withDefaultNamespace("sun"));
             sunQuad = buildQuad("Atla eclipse quad", sun.getU0(), sun.getV0(), sun.getU1(), sun.getV1());
         }
 
-        draw("Atla eclipse", SUBTRACT_CELESTIAL, sunQuad, 6, pose, SUN_SIZE,
+        draw(pass, "Atla eclipse", SUBTRACT_CELESTIAL, sunQuad, pose, SUN_SIZE,
                 new Vector4f(depth, depth, depth, 1.0F), atlas.getTextureView(), atlas.getSampler());
     }
 
@@ -265,34 +275,31 @@ public final class WorldEventSky {
      * which is exactly what has to be ignored here — the whole point is stars at noon —
      * and its field is fifteen hundred strong, a night sky rather than a scattering.
      */
-    private static void drawEclipseStars(Matrix4f pose, float brightness) {
+    private static void drawEclipseStars(RenderPass pass, Matrix4f pose, float brightness) {
         if (starQuads == null) buildStars();
 
         Matrix4fStack modelView = RenderSystem.getModelViewStack();
         modelView.pushMatrix();
         modelView.mul(pose);
-
-        GpuBufferSlice transform = RenderSystem.getDynamicUniforms().writeTransform(modelView,
-                new Vector4f(brightness, brightness, brightness, brightness), new Vector3f(), new Matrix4f());
-        RenderSystem.AutoStorageIndexBuffer indices = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
-
-        try (RenderPass pass = openPass("Atla eclipse stars")) {
-            pass.setPipeline(RenderPipelines.STARS);
-            RenderSystem.bindDefaultUniforms(pass);
-            pass.setUniform("DynamicTransforms", transform);
-            pass.setVertexBuffer(0, starQuads);
-            pass.setIndexBuffer(indices.getBuffer(starIndexCount), indices.type());
-            pass.drawIndexed(0, 0, starIndexCount, 1);
-        }
-
+        GpuBufferSlice transform = RenderSystem.getDynamicUniforms().writeTransform(new Matrix4f(modelView),
+                new Vector4f(brightness, brightness, brightness, brightness));
         modelView.popMatrix();
+
+        pass.pushDebugGroup(() -> "Atla eclipse stars");
+        pass.setPipeline(RenderSystem.getCompiledPipeline(RenderPipelines.STARS));
+        RenderSystem.bindDefaultUniforms(pass);
+        pass.setUniform("DynamicTransforms", transform);
+        pass.setVertexBuffer(0, starQuads.slice());
+        pass.setIndexBuffer(quadIndices().getBuffer(starIndexCount), quadIndices().type());
+        pass.drawIndexed(starIndexCount, 1, 0, 0, 0);
+        pass.popDebugGroup();
     }
 
     /**
      * One textured quad on the sky dome, drawn the way vanilla draws its sun: a unit quad
      * in the XZ plane, pushed {@link #SKY_DISTANCE} up and scaled to size.
      */
-    private static void draw(String label, RenderPipeline pipeline, GpuBuffer quad, int indexCount,
+    private static void draw(RenderPass pass, String label, RenderPipeline pipeline, GpuBuffer quad,
                              Matrix4f pose, float halfSize, Vector4f colour,
                              GpuTextureView texture, GpuSampler sampler) {
         Matrix4fStack modelView = RenderSystem.getModelViewStack();
@@ -300,36 +307,35 @@ public final class WorldEventSky {
         modelView.mul(pose);
         modelView.translate(0.0F, SKY_DISTANCE, 0.0F);
         modelView.scale(halfSize, 1.0F, halfSize);
-
         GpuBufferSlice transform = RenderSystem.getDynamicUniforms()
-                .writeTransform(modelView, colour, new Vector3f(), new Matrix4f());
-        RenderSystem.AutoStorageIndexBuffer indices = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
-
-        try (RenderPass pass = openPass(label)) {
-            pass.setPipeline(pipeline);
-            RenderSystem.bindDefaultUniforms(pass);
-            pass.setUniform("DynamicTransforms", transform);
-            pass.bindTexture("Sampler0", texture, sampler);
-            pass.setVertexBuffer(0, quad);
-            pass.setIndexBuffer(indices.getBuffer(indexCount), indices.type());
-            pass.drawIndexed(0, 0, indexCount, 1);
-        }
-
+                .writeTransform(new Matrix4f(modelView), colour);
         modelView.popMatrix();
+
+        pass.pushDebugGroup(() -> label);
+        pass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
+        RenderSystem.bindDefaultUniforms(pass);
+        pass.setUniform("DynamicTransforms", transform);
+        pass.setUniform("Sampler0", texture, sampler);
+        pass.setVertexBuffer(0, quad.slice());
+        pass.setIndexBuffer(quadIndices().getBuffer(6), quadIndices().type());
+        pass.drawIndexed(6, 1, 0, 0, 0);
+        pass.popDebugGroup();
     }
 
-    private static RenderPass openPass(String label) {
-        GpuTextureView colour = Minecraft.getInstance().getMainRenderTarget().getColorTextureView();
-        GpuTextureView depth = Minecraft.getInstance().getMainRenderTarget().getDepthTextureView();
-        return RenderSystem.getDevice().createCommandEncoder()
-                .createRenderPass(() -> label, colour, OptionalInt.empty(), depth, OptionalDouble.empty());
+    /**
+     * Vanilla's shared quad index buffer, the one its own sun and stars draw with. Asked
+     * for at draw time rather than kept in a field: it may only be touched on the render
+     * thread, and class loading happens at client start-up.
+     */
+    private static RenderSystem.AutoStorageIndexBuffer quadIndices() {
+        return RenderSystem.getSequentialBuffer(PrimitiveTopology.QUADS);
     }
 
     /** A unit quad facing down onto the viewer, with the given UVs. Vanilla's own winding. */
     private static GpuBuffer buildQuad(String label, float u0, float v0, float u1, float v1) {
         VertexFormat format = DefaultVertexFormat.POSITION_TEX;
         try (ByteBufferBuilder bytes = ByteBufferBuilder.exactlySized(4 * format.getVertexSize())) {
-            BufferBuilder buffer = new BufferBuilder(bytes, VertexFormat.Mode.QUADS, format);
+            BufferBuilder buffer = new BufferBuilder(bytes, PrimitiveTopology.QUADS, format);
             buffer.addVertex(-1.0F, 0.0F, -1.0F).setUv(u0, v0);
             buffer.addVertex(1.0F, 0.0F, -1.0F).setUv(u1, v0);
             buffer.addVertex(1.0F, 0.0F, 1.0F).setUv(u1, v1);
@@ -356,7 +362,7 @@ public final class WorldEventSky {
         VertexFormat format = DefaultVertexFormat.POSITION;
 
         try (ByteBufferBuilder bytes = ByteBufferBuilder.exactlySized(ECLIPSE_STARS * 4 * format.getVertexSize())) {
-            BufferBuilder buffer = new BufferBuilder(bytes, VertexFormat.Mode.QUADS, format);
+            BufferBuilder buffer = new BufferBuilder(bytes, PrimitiveTopology.QUADS, format);
             int made = 0;
 
             while (made < ECLIPSE_STARS) {
@@ -438,7 +444,7 @@ public final class WorldEventSky {
      * The comet has none. It is a thing in the sky rather than a change in the light, and
      * a permanent orange wash for a whole day is exactly what it was asked not to be.
      */
-    public static void renderScreenTint(GuiGraphics graphics) {
+    public static void renderScreenTint(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
 

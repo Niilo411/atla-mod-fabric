@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:copper_ingot",
+    "count": 64
+  },
+  "gives": {
+    "id": "atlamod:lightning_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}

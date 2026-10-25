@@ -105,7 +105,7 @@ public class LightningJump implements ChargedAbility {
         // so much as reappear, and carrying their old velocity through would send
         // them skidding onward.
         player.setDeltaMovement(Vec3.ZERO);
-        player.hurtMarked = true;
+        player.syncVelocity = true;
 
         // A teleport is not a fall, so whatever height was banked on the way is not
         // theirs to pay for.

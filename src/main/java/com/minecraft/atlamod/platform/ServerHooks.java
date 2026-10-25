@@ -6,18 +6,17 @@ import com.minecraft.atlamod.ModAttachments;
 import com.minecraft.atlamod.ServerEvents;
 import com.minecraft.atlamod.platform.event.*;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -26,7 +25,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -52,7 +50,7 @@ public final class ServerHooks {
         ServerTickEvents.END_SERVER_TICK.register(server ->
                 ServerEvents.onServerTick(new ServerTickEvent.Post(server)));
 
-        ServerWorldEvents.UNLOAD.register((server, level) ->
+        ServerLevelEvents.UNLOAD.register((server, level) ->
                 ServerEvents.onLevelUnload(new LevelEvent.Unload(level)));
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server ->
@@ -61,7 +59,6 @@ public final class ServerHooks {
         CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->
                 ServerEvents.onRegisterCommands(new RegisterCommandsEvent(dispatcher, buildContext, selection)));
 
-        registerTrades();
 
         EntityTrackingEvents.START_TRACKING.register((target, watcher) ->
                 ServerEvents.onStartTracking(new PlayerEvent.StartTracking(watcher, target)));
@@ -94,7 +91,7 @@ public final class ServerHooks {
             return event.isCanceled() ? event.getCancellationResult() : InteractionResult.PASS;
         });
 
-        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) ->
+        ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register((player, origin, destination) ->
                 ServerEvents.onPlayerChangeDimension(new PlayerEvent.PlayerChangedDimensionEvent(player)));
 
         // RESPAWN. Fabric carries attachments across in its OWN AFTER_RESPAWN listener,
@@ -122,39 +119,6 @@ public final class ServerHooks {
                 .flatMap(tag -> BendingData.CODEC.parse(NbtOps.INSTANCE, tag))
                 .resultOrPartial(error -> Atlamod.LOGGER.error("Could not copy bending data on respawn: {}", error))
                 .orElseGet(BendingData::new);
-    }
-
-    // ------------------------------------------------------------------
-    // Villager trades
-    // ------------------------------------------------------------------
-
-    /** The eight professions that sell a scroll. */
-    private static final List<ResourceKey<VillagerProfession>> TRADING_PROFESSIONS = List.of(
-            VillagerProfession.WEAPONSMITH, VillagerProfession.FISHERMAN, VillagerProfession.CLERIC,
-            VillagerProfession.SHEPHERD, VillagerProfession.ARMORER, VillagerProfession.MASON,
-            VillagerProfession.FLETCHER, VillagerProfession.CARTOGRAPHER);
-
-    private static final List<Consumer<VillagerTradesEvent>> TRADE_HANDLERS = List.of(
-            ServerEvents::onVillagerTrades, ServerEvents::onFishermanTrades, ServerEvents::onClericTrades,
-            ServerEvents::onShepherdTrades, ServerEvents::onArmorerTrades, ServerEvents::onMasonTrades,
-            ServerEvents::onFletcherTrades, ServerEvents::onCartographerTrades);
-
-    /**
-     * Each profession's book is built once, by running every trade handler over it exactly
-     * as NeoForge's VillagerTradesEvent did, and whatever they added to a level is handed
-     * to Fabric for that level.
-     */
-    private static void registerTrades() {
-        for (ResourceKey<VillagerProfession> profession : TRADING_PROFESSIONS) {
-            VillagerTradesEvent event = new VillagerTradesEvent(profession);
-            for (Consumer<VillagerTradesEvent> handler : TRADE_HANDLERS) handler.accept(event);
-
-            for (int level = 1; level <= 5; level++) {
-                var added = event.getTrades().get(level);
-                if (added.isEmpty()) continue;
-                TradeOfferHelper.registerVillagerOffers(profession, level, factories -> factories.addAll(added));
-            }
-        }
     }
 
     // ------------------------------------------------------------------

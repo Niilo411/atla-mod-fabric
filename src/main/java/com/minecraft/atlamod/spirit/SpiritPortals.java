@@ -170,16 +170,16 @@ public final class SpiritPortals {
 
         for (int distance : TORN_DISTANCES) {
             if (openAt(level, player, distance, true)) {
-                player.displayClientMessage(Component.literal(
-                        "§bYou tear a way open. It will not hold long."), true);
+                player.sendOverlayMessage(Component.literal(
+                        "§bYou tear a way open. It will not hold long."));
                 return true;
             }
         }
 
         // TOLD, not silent. Five casts is a real effort to spend on nothing, and "there
         // is a wall in the way" is something the player can act on by turning round.
-        player.displayClientMessage(Component.literal(
-                "§bThere is no room in front of you to open a way."), true);
+        player.sendOverlayMessage(Component.literal(
+                "§bThere is no room in front of you to open a way."));
         return false;
     }
 
@@ -306,14 +306,14 @@ public final class SpiritPortals {
                 data.setMeditateTickTimer(0);
                 player.setAttached(com.minecraft.atlamod.ModAttachments.BENDING_DATA, data);
 
-                player.displayClientMessage(Component.literal(
-                        "§bA way home opens."), true);
+                player.sendOverlayMessage(Component.literal(
+                        "§bA way home opens."));
                 return true;
             }
         }
 
-        player.displayClientMessage(Component.literal(
-                "§bThere is no room in front of you to open a way."), true);
+        player.sendOverlayMessage(Component.literal(
+                "§bThere is no room in front of you to open a way."));
         return false;
     }
 
@@ -342,7 +342,7 @@ public final class SpiritPortals {
         if (found.isEmpty()) return false;
 
         activate(level, found.get());
-        player.displayClientMessage(Component.literal("§bThe spirit portal opens."), true);
+        player.sendOverlayMessage(Component.literal("§bThe spirit portal opens."));
         return true;
     }
 

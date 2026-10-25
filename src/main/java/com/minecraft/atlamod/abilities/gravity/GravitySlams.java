@@ -54,7 +54,7 @@ public final class GravitySlams {
         if (!(victim.level() instanceof ServerLevel level)) return;
 
         victim.setDeltaMovement(victim.getDeltaMovement().x, launchSpeed, victim.getDeltaMovement().z);
-        victim.hurtMarked = true;
+        victim.syncVelocity = true;
         victim.fallDistance = 0.0F;
 
         ACTIVE.add(new Slammed(level, victim.getUUID(), caster.getUUID(), LIFT_TICKS));
@@ -93,7 +93,7 @@ public final class GravitySlams {
 
     private static void slam(ServerLevel level, LivingEntity victim, ServerPlayer caster) {
         victim.setDeltaMovement(victim.getDeltaMovement().x, SLAM_SPEED, victim.getDeltaMovement().z);
-        victim.hurtMarked = true;
+        victim.syncVelocity = true;
 
         // The caster is who this damage is attributed to, whether or not they are
         // still online to see it land — the same call Bass Bounce's slam makes.

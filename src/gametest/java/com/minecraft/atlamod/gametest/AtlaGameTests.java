@@ -1,5 +1,6 @@
 package com.minecraft.atlamod.gametest;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.minecraft.atlamod.AbilityHandler;
@@ -249,14 +250,14 @@ public class AtlaGameTests {
 
             return switch (where) {
                 case AT_A_MOB -> {
-                    Mob zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 5));
+                    Mob zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 5));
                     player.lookAt(EntityAnchorArgument.Anchor.EYES, zombie.getEyePosition());
                     yield zombie;
                 }
                 case IN_WATER -> {
                     for (int z = 1; z <= 4; z++) helper.setBlock(new BlockPos(1, 1, z), Blocks.WATER);
                     player.getInventory().add(new ItemStack(Atlamod.WATER_CANTEEN));
-                    Mob zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 6));
+                    Mob zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 6));
                     player.lookAt(EntityAnchorArgument.Anchor.EYES,
                             Vec3.atCenterOf(helper.absolutePos(new BlockPos(1, 1, 3))));
                     yield zombie;

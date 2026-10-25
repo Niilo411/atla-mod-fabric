@@ -294,7 +294,7 @@ public final class EarthGrabs {
             // Players ignore server-side velocity unless it is explicitly pushed to
             // them. A mob is simulated on the server and needs no packet.
             if (living instanceof Player) {
-                living.hurtMarked = true;
+                living.syncVelocity = true;
             }
 
             living.fallDistance = 0.0F;

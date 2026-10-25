@@ -65,7 +65,7 @@ public class BendingSeat extends Entity {
         this.noPhysics = false;
         this.setNoGravity(true);
         this.setSilent(true);
-        this.setInvulnerable(true);
+        this.setPermanentlyInvulnerable(true);
     }
 
     /** Set before the rider mounts, so the client has it when it first draws them. */

@@ -64,14 +64,14 @@ public class EarthGrab implements Ability {
         BlockPos ground = farGround(player);
 
         if (ground == null) {
-            player.displayClientMessage(
-                    Component.literal("§6There is no ground out there to grab with!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§6There is no ground out there to grab with!"));
             return false;
         }
 
         if (!level.getFluidState(ground.below()).isEmpty()) {
-            player.displayClientMessage(
-                    Component.literal("§6You cannot raise a wave out of water!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§6You cannot raise a wave out of water!"));
             return false;
         }
 

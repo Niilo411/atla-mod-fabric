@@ -329,7 +329,7 @@ public final class BendingProjectiles {
                 // shots quickly would silently throw most of them away. Clearing the
                 // timer first makes every splinter count.
                 if (shot.spec.piercesInvulnerability()) {
-                    living.invulnerableTime = 0;
+                    living.setInvulnerableTime(0);
                 }
 
                 AbilitySupport.hurt(living, owner.damageSources().indirectMagic(owner, owner),
@@ -350,7 +350,7 @@ public final class BendingProjectiles {
             Vec3 push = shot.velocity.normalize().scale(shot.spec.knockback());
             living.setDeltaMovement(push.x, Math.max(0.25, push.y), push.z);
             // Players ignore server-side velocity unless it is explicitly pushed to them.
-            living.hurtMarked = true;
+            living.syncVelocity = true;
 
             burst(shot);
             return true;

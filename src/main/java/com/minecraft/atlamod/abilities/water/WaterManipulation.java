@@ -61,8 +61,8 @@ public class WaterManipulation implements TwoPhaseAbility {
         if (HeldBlocks.isHolding(player)) return false;
 
         if (findSource(player) == null) {
-            player.displayClientMessage(
-                    Component.literal("§bYou must be looking at a water source block!"), true);
+            player.sendOverlayMessage(
+                    Component.literal("§bYou must be looking at a water source block!"));
             return false;
         }
         return true;
@@ -98,8 +98,8 @@ public class WaterManipulation implements TwoPhaseAbility {
         // Nowhere to put it. The dispatcher has already spent the click, so rather
         // than leave the water stranded with nothing carrying it, set it down
         // wherever it can go.
-        player.displayClientMessage(
-                Component.literal("§bNo room there — the water settles where it was."), true);
+        player.sendOverlayMessage(
+                Component.literal("§bNo room there — the water settles where it was."));
         HeldBlocks.release(player);
     }
 

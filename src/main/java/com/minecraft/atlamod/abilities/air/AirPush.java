@@ -149,6 +149,6 @@ public class AirPush implements Ability {
 
         living.setDeltaMovement(away.x * speed, PUSH_LIFT, away.z * speed);
         // Without this a pushed player's client ignores the server's velocity change.
-        living.hurtMarked = true;
+        living.syncVelocity = true;
     }
 }

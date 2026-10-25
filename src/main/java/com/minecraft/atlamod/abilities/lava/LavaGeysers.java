@@ -138,15 +138,15 @@ public final class LavaGeysers {
 
             living.setDeltaMovement(living.getDeltaMovement().x, LAUNCH, living.getDeltaMovement().z);
             // Players ignore server-side velocity unless it is explicitly pushed to them.
-            living.hurtMarked = true;
+            living.syncVelocity = true;
 
             Lava.scorch(living);
         }
 
         // And it throws lava about, which is the part that actually spreads the hazard.
         for (int i = 0; i < SPLASHES; i++) {
-            int dx = level.random.nextInt(SPLASH_RANGE * 2 + 1) - SPLASH_RANGE;
-            int dz = level.random.nextInt(SPLASH_RANGE * 2 + 1) - SPLASH_RANGE;
+            int dx = level.getRandom().nextInt(SPLASH_RANGE * 2 + 1) - SPLASH_RANGE;
+            int dz = level.getRandom().nextInt(SPLASH_RANGE * 2 + 1) - SPLASH_RANGE;
 
             BlockPos ground = Lava.footing(level,
                     geyser.mouth.offset(dx, 0, dz), UP_SCAN, DOWN_SCAN);

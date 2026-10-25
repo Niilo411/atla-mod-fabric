@@ -1,5 +1,6 @@
 package com.minecraft.atlamod.abilities;
 
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -121,7 +122,7 @@ public final class HeldBlocks {
             held.display.setDeltaMovement(Vec3.ZERO);
             held.display.setPos(held.pos.x, held.pos.y - 0.5, held.pos.z);
             held.display.time = 0;
-            // EntityType.FALLING_BLOCK is registered with updateInterval(20), so its
+            // EntityTypes.FALLING_BLOCK is registered with updateInterval(20), so its
             // position is only broadcast ONCE A SECOND. Moving it every tick without
             // this makes it teleport in one-second jumps, which looks like severe lag
             // and is really just a sync rate. hasImpulse forces the update through, and

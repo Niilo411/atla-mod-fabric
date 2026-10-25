@@ -67,7 +67,7 @@ public class SpiritTempleStructure extends Structure {
         if (chance >= 100) return true;
         if (chance <= 0) return false;
 
-        long h = RARITY_SEED ^ (chunkPos.x * 0x9E3779B97F4A7C15L) ^ (chunkPos.z * 0xC2B2AE3D27D4EB4FL);
+        long h = RARITY_SEED ^ (chunkPos.x() * 0x9E3779B97F4A7C15L) ^ (chunkPos.z() * 0xC2B2AE3D27D4EB4FL);
 
         h ^= (h >>> 30);
         h *= 0xBF58476D1CE4E5B9L;

@@ -130,7 +130,7 @@ public class BloodManipulation implements ChanneledAbility {
         // A player's client owns their position and ignores server-side velocity
         // unless it is explicitly pushed to them.
         if (puppet instanceof Player) {
-            puppet.hurtMarked = true;
+            puppet.syncVelocity = true;
         }
 
         // Being flown around by somebody else is not a fall the puppet chose.

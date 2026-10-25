@@ -86,7 +86,7 @@ public class GravityPush implements Ability {
 
         com.minecraft.atlamod.abilities.AbilitySupport.hurt(target, player.damageSources().indirectMagic(player, player), damage);
         target.setDeltaMovement(forward.x * PUSH_SPEED, target.getDeltaMovement().y, forward.z * PUSH_SPEED);
-        target.hurtMarked = true;
+        target.syncVelocity = true;
 
         shatterCorridor(level, from, forward);
 
@@ -103,8 +103,8 @@ public class GravityPush implements Ability {
         Vec3 across = new Vec3(-forward.z, 0.0, forward.x);
 
         for (int i = 0; i < BROKEN_BLOCKS; i++) {
-            double along = level.random.nextInt(CORRIDOR_LENGTH);
-            double side = level.random.nextInt(CORRIDOR_WIDTH) - (CORRIDOR_WIDTH / 2);
+            double along = level.getRandom().nextInt(CORRIDOR_LENGTH);
+            double side = level.getRandom().nextInt(CORRIDOR_WIDTH) - (CORRIDOR_WIDTH / 2);
 
             Vec3 spot = origin.add(forward.scale(along)).add(across.scale(side));
             BlockPos pos = BlockPos.containing(spot);

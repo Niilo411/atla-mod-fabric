@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -147,7 +147,7 @@ public class Atlamod implements ModInitializer {
                     .strength(-1.0F, 3600000.0F)
                     .lightLevel(state -> 15)
                     .sound(SoundType.STONE)
-                    .pushReaction(PushReaction.DESTROY)
+                    .pushReaction(PushReaction.POPPED)
                     .noLootTable());
 
     // Lavabending's key. Bought from a village shepherd, read once, spent.
@@ -193,7 +193,7 @@ public class Atlamod implements ModInitializer {
                     .instabreak()
                     .lightLevel(state -> 15)
                     .sound(SoundType.WOOL)
-                    .pushReaction(PushReaction.DESTROY)
+                    .pushReaction(PushReaction.POPPED)
                     .noLootTable());
 
     // The lit spirit portal. Unbreakable and uncollectable for the same reason vanilla's
@@ -210,7 +210,7 @@ public class Atlamod implements ModInitializer {
                     .strength(-1.0F)
                     .sound(SoundType.GLASS)
                     .lightLevel(state -> 11)
-                    .pushReaction(PushReaction.BLOCK)
+                    .pushReaction(PushReaction.IMMOVEABLE)
                     .noLootTable());
 
     // ------------------------------------------------------------------
@@ -227,7 +227,7 @@ public class Atlamod implements ModInitializer {
     // ------------------------------------------------------------------
     public static final CreativeModeTab AVATAR_TAB = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
             id("avatar_tab"),
-            FabricItemGroup.builder()
+            FabricCreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.atlamod"))
                     .icon(() -> SPIRIT_HELMET.getDefaultInstance())
                     .displayItems((parameters, output) -> {
@@ -281,20 +281,20 @@ public class Atlamod implements ModInitializer {
     // Both are meant to be earned in survival — the canteen crafted, the scroll bought —
     // but having to remember an item id to test either is needless friction.
     private static void addCreative() {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.NATURAL_BLOCKS)
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.NATURAL_BLOCKS)
                 .register(entries -> entries.accept(SPIRIT_ORE_ITEM));
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS)
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
                 .register(entries -> entries.accept(SPIRIT_SHARD));
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT).register(entries -> {
             entries.accept(SPIRIT_HELMET);
             entries.accept(SPIRIT_CHESTPLATE);
             entries.accept(SPIRIT_LEGGINGS);
             entries.accept(SPIRIT_BOOTS);
         });
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
             entries.accept(WATER_CANTEEN);
             entries.accept(LIGHTNING_SCROLL);
             entries.accept(ICE_SCROLL);

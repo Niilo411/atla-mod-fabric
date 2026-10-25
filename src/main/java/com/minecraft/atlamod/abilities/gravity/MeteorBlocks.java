@@ -114,7 +114,7 @@ public final class MeteorBlocks {
             for (int y = 0; y < SIDE; y++) {
                 for (int z = 0; z < SIDE; z++) {
                     Vec3 offset = new Vec3(x - half, y - half, z - half);
-                    BlockState state = PALETTE[level.random.nextInt(PALETTE.length)];
+                    BlockState state = PALETTE[level.getRandom().nextInt(PALETTE.length)];
 
                     Vec3 at = centre.add(offset);
                     BlockPos spawnAt = BlockPos.containing(at);

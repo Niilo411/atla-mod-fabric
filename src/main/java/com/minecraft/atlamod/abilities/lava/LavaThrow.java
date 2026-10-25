@@ -94,8 +94,8 @@ public class LavaThrow implements ChargedAbility, TwoPhaseAbility {
     public void execute(ServerPlayer player, BendingData data) {
         Lava.roar((ServerLevel) player.level(), player.position(), 1.2F, 1.1F);
 
-        player.displayClientMessage(Component.literal(
-                "§6Lava gathered — left click to throw"), true);
+        player.sendOverlayMessage(Component.literal(
+                "§6Lava gathered — left click to throw"));
     }
 
     /** The four blobs held ready, turning in front of the bender. */
