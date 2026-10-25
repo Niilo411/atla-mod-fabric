@@ -59,7 +59,7 @@ import java.util.OptionalInt;
  * — measured, not assumed. Their shape lives entirely in their BRIGHTNESS, and it is the
  * additive blend that makes their dark parts invisible. So ordinary alpha blending cannot
  * recolour them: painting a red moon over the white one with alpha paints a red SQUARE,
- * and the first black sun was a hard black rectangle hanging in the sky. Anything that
+ * and the first hollow sun was a hard black rectangle hanging in the sky. Anything that
  * changes one of them has to work in brightness too.
  *
  * THE BLOOD MOON IS NOW ONE PASS, not two. The NeoForge build subtracted vanilla's white
@@ -82,13 +82,13 @@ public final class WorldEventSky {
 
     /** How far the fog is dragged towards each event's colour, at its strongest. */
     private static final float BLOOD_MOON_STRENGTH = 0.75F;
-    private static final float BLACK_SUN_STRENGTH = 0.90F;
+    private static final float HOLLOW_SUN_STRENGTH = 0.90F;
 
     /** How strong the screen wash is at its deepest. Deliberately slight. */
     private static final float SCREEN_TINT = 0.16F;
 
     private static final Identifier COMET = Identifier.fromNamespaceAndPath(
-            ElementalPaths.MODID, "textures/environment/sozins_comet.png");
+            ElementalPaths.MODID, "textures/environment/ember_comet.png");
 
     /**
      * Where the comet hangs, as two rotations away from straight overhead.
@@ -201,7 +201,7 @@ public final class WorldEventSky {
         if (mc.gameRenderer.getMainCamera().getFluidInCamera() != FogType.NONE) return;
 
         float eclipse = WorldEvents.eclipseDepth(mc.level);
-        boolean comet = WorldEvents.isActive(mc.level, WorldEvents.Event.SOZINS_COMET);
+        boolean comet = WorldEvents.isActive(mc.level, WorldEvents.Event.EMBER_COMET);
         if (!comet && eclipse <= 0.0F) return;
 
         if (comet) {
@@ -225,7 +225,7 @@ public final class WorldEventSky {
             // than leaving it shining through the black disc.
             float depth = eclipse * rainBrightness;
             drawEclipseStars(celestial, depth);
-            drawBlackSun(celestial, depth);
+            drawHollowSun(celestial, depth);
         }
     }
 
@@ -247,7 +247,7 @@ public final class WorldEventSky {
      * the moon has crossed it. Nothing is added in its place — what is left is the black of
      * the darkened sky, and the faint halo the subtraction leaves reads as corona.
      */
-    private static void drawBlackSun(Matrix4f pose, float depth) {
+    private static void drawHollowSun(Matrix4f pose, float depth) {
         TextureAtlas atlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.CELESTIALS);
         if (sunQuad == null) {
             TextureAtlasSprite sun = atlas.getSprite(Identifier.withDefaultNamespace("sun"));
@@ -417,7 +417,7 @@ public final class WorldEventSky {
         // rather than switching. At the middle of the six minutes it is total.
         float eclipse = WorldEvents.eclipseDepth(level);
         if (eclipse > 0.0F) {
-            blend(fog, 0.02F, 0.02F, 0.04F, BLACK_SUN_STRENGTH * eclipse);
+            blend(fog, 0.02F, 0.02F, 0.04F, HOLLOW_SUN_STRENGTH * eclipse);
         }
     }
 
