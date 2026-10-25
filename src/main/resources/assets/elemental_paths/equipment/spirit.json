@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "elemental_paths:spirit"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "elemental_paths:spirit"
+      }
+    ]
+  }
+}

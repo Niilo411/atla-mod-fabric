@@ -67,7 +67,7 @@ public final class SpiritTextures {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             System.err.println("usage: java tools/SpiritTextures.java <minecraft-resources.jar> "
-                    + "<src/main/resources/assets/atlamod/textures>");
+                    + "<src/main/resources/assets/elemental_paths/textures>");
             System.err.println("the jar is Loom's copy of the client, "
                     + "~/.gradle/caches/fabric-loom/<version>/minecraft-client.jar");
             System.exit(2);
@@ -80,7 +80,7 @@ public final class SpiritTextures {
             shift(jar, out, "item/amethyst_shard.png", "item/spirit_shard.png", 230, 340);
 
             // Since 1.21.2 a suit's sheets are "equipment" textures, one per layer type, named
-            // after the equipment asset (see assets/atlamod/equipment/spirit.json).
+            // after the equipment asset (see assets/elemental_paths/equipment/spirit.json).
             tint(jar, out, "entity/equipment/humanoid/chainmail.png", "entity/equipment/humanoid/spirit.png");
             tint(jar, out, "entity/equipment/humanoid_leggings/chainmail.png",
                     "entity/equipment/humanoid_leggings/spirit.png");

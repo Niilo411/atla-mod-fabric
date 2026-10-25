@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "id": "atlamod-gametest",
+  "id": "elemental_paths-gametest",
   "version": "1.0.0",
-  "name": "Atla mod game tests",
-  "description": "Automated in-game checks for the Atla mod. Development only; never shipped.",
+  "name": "Elemental Paths game tests",
+  "description": "Automated in-game checks for the Elemental Paths. Development only; never shipped.",
   "environment": "*",
   "entrypoints": {
-    "fabric-gametest": ["com.minecraft.atlamod.gametest.AtlaGameTests"]
+    "fabric-gametest": ["io.github.niilo411.elementalpaths.gametest.PathsGameTests"]
   },
   "depends": {
-    "atlamod": "*",
+    "elemental_paths": "*",
     "fabric-gametest-api-v1": "*"
   }
 }

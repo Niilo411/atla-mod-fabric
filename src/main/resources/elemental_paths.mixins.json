@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.niilo411.elementalpaths.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EntityMixin",
+    "ItemStackMixin",
+    "LivingEntityMixin",
+    "PlayerMixin",
+    "ServerLevelMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}

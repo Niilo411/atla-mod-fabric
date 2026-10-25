@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "id": "atlamod",
+  "id": "elemental_paths",
   "version": "${version}",
-  "name": "Atla mod",
-  "description": "Avatar-style elemental bending. Four elements, eight sub-elements and over a hundred abilities behind a progression tree you unlock as you play.",
+  "name": "Elemental Paths",
+  "description": "Elemental channeling. Four elements, eight sub-elements and over a hundred abilities behind a progression tree you unlock as you play.",
   "authors": ["Niilo Kahn"],
   "license": "All-Rights-Reserved",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.minecraft.atlamod.Atlamod"],
-    "client": ["com.minecraft.atlamod.client.AtlamodClient"]
+    "main": ["io.github.niilo411.elementalpaths.ElementalPaths"],
+    "client": ["io.github.niilo411.elementalpaths.client.ElementalPathsClient"]
   },
   "mixins": [
-    "atlamod.mixins.json",
-    { "config": "atlamod.client.mixins.json", "environment": "client" }
+    "elemental_paths.mixins.json",
+    { "config": "elemental_paths.client.mixins.json", "environment": "client" }
   ],
-  "accessWidener": "atlamod.accesswidener",
+  "accessWidener": "elemental_paths.accesswidener",
   "depends": {
     "fabricloader": ">=0.18.4",
     "minecraft": "~1.21.11",

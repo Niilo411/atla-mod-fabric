@@ -25,16 +25,16 @@ sourceSets {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/atlamod.accesswidener")
+    accessWidenerPath = file("src/main/resources/elemental_paths.accesswidener")
 
     splitEnvironmentSourceSets()
 
     mods {
-        "atlamod" {
+        "elemental_paths" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }
-        "atlamod-gametest" {
+        "elemental_paths-gametest" {
             sourceSet sourceSets.gametest
         }
     }

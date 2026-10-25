@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.niilo411.elementalpaths.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "FogRendererMixin",
+    "GameRendererMixin",
+    "HumanoidMobRendererMixin",
+    "LocalPlayerMixin",
+    "SkyRendererMixin",
+    "SoundManagerMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}
