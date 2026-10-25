@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "atlamod:cartographer/gravity_scroll"
+    "elemental_paths:cartographer/gravity_scroll"
   ]
 }

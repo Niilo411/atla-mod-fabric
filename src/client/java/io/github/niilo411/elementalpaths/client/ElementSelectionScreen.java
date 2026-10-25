@@ -1,0 +1,167 @@
+package io.github.niilo411.elementalpaths.client;
+
+import io.github.niilo411.elementalpaths.network.ElementChoicePacket;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import io.github.niilo411.elementalpaths.platform.PacketDistributor;
+
+public class ElementSelectionScreen extends Screen {
+
+    /**
+     * Which button chooses which path, keyed by the ELEMENT KEY rather than its label.
+     *
+     * The key is what the emblem table, the packet and every path list are all named by,
+     * so keeping it here means the button carries the one string that agrees with all of
+     * them. The pretty name is derived from it by {@link #label}, which used to be the
+     * other way round — and that broke the moment a path's name was not simply its key
+     * with a capital letter, which "No channeling" is not.
+     */
+    private final java.util.Map<Button, String> elementButtonMap = new java.util.HashMap<>();
+
+    /** The four channeling arts. */
+    private static final int ICON_SIZE = 48;
+
+    /**
+     * How far apart the four sit, centre to centre of the gap.
+     *
+     * WIDENED FROM 12 to make room for the No channeling button in the middle. That button
+     * is {@link #CENTRE_SIZE} across, so the gap has to be at least that plus a margin, or
+     * the four arts would sit on top of it.
+     */
+    private static final int SPACING = 34;
+
+    /**
+     * The No channeling button, deliberately smaller than the four arts.
+     *
+     * Size is meaning here rather than decoration: the four elements are what this screen
+     * is for, and the fifth choice is an opt OUT of them. Drawing it the same size would
+     * present it as a fifth element, which is the one thing it is not.
+     */
+    private static final int CENTRE_SIZE = 28;
+
+    /** The path key for choosing no channeling at all. */
+    public static final String NO_CHANNELING = "nochanneling";
+
+    public ElementSelectionScreen() {
+        super(Component.literal("Choose Your Element"));
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        elementButtonMap.clear();
+
+        int cx = this.width / 2;
+        int cy = this.height / 2;
+        int iconSize = ICON_SIZE;
+        int sp = SPACING;
+
+        // 1. Fire (Top Left)
+        add("fire", cx - iconSize - (sp / 2), cy - iconSize - (sp / 2), iconSize);
+        // 2. Water (Top Right)
+        add("water", cx + (sp / 2), cy - iconSize - (sp / 2), iconSize);
+        // 3. Earth (Bottom Left)
+        add("earth", cx - iconSize - (sp / 2), cy + (sp / 2), iconSize);
+        // 4. Air (Bottom Right)
+        add("air", cx + (sp / 2), cy + (sp / 2), iconSize);
+
+        // 5. No channeling, in the hole the four leave in the middle. Added LAST so it is
+        // the last thing drawn and the last thing offered a click, which matters because
+        // the four are drawn from the same list and a widget added later wins an overlap.
+        // Nothing actually overlaps at these sizes, but the ordering costs nothing and
+        // stops a future change to SPACING turning a near miss into an unclickable button.
+        add(NO_CHANNELING, cx - (CENTRE_SIZE / 2), cy - (CENTRE_SIZE / 2), CENTRE_SIZE);
+    }
+
+    private void add(String element, int x, int y, int size) {
+        Button button = Button.builder(Component.literal(""), b -> chooseElement(element))
+                .bounds(x, y, size, size).build();
+
+        elementButtonMap.put(button, element);
+        this.addRenderableWidget(button);
+    }
+
+    /** What a path is called on screen. Shared with the HUD, so the two cannot disagree. */
+    private static String label(String element) {
+        String name = io.github.niilo411.elementalpaths.abilities.ElementPaths.displayName(element);
+        return name.isEmpty() ? "Unknown" : name;
+    }
+
+    private void chooseElement(String element) {
+        // 1. Update the client locally so the HUD and Upgrade Menu update instantly!
+        if (this.minecraft != null && this.minecraft.player != null) {
+            var data = this.minecraft.player.getAttachedOrCreate(io.github.niilo411.elementalpaths.ModAttachments.CHANNELING_DATA);
+            data.setActiveElement(element);
+
+            // Add it to your unlocked elements list locally just in case!
+            var unlocked = data.getUnlockedElements();
+            if (!unlocked.contains(element)) {
+                unlocked.add(element);
+            }
+        }
+
+        // 2. Send the choice to the server and close the screen
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ElementChoicePacket(element));
+        this.onClose();
+    }
+
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // NO BACKGROUND HERE. Since 1.21.6 vanilla draws it before render() is called, in a
+        // layer of its own, and its blur only reaches what is below that layer — so the old
+        // trap (the blur smearing whatever had already been drawn, title included) is gone,
+        // and drawing the background a second time here would throw: a frame may only blur
+        // once.
+
+        // Draw the title text at the top
+        guiGraphics.centeredText(this.font, "Choose Your Path", this.width / 2, this.height / 2 - 90, 0xFFFFFFFF);
+
+        // The widgets.
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+
+        // --- DRAW ICON PLACEHOLDERS & TOOLTIPS ---
+        for (Button button : elementButtonMap.keySet()) {
+            {
+                int bx = button.getX();
+                int by = button.getY();
+                int bw = button.getWidth();
+                int bh = button.getHeight();
+
+                String element = elementButtonMap.getOrDefault(button, "");
+
+                // Draw dark background box and border
+                guiGraphics.fill(bx, by, bx + bw, by + bh, 0xFF222222);
+                guiGraphics.outline(bx, by, bw, bh, 0xFF555555);
+
+                if (ElementIcons.has(element)) {
+                    // Inset by a pixel so the emblem sits inside the border, not on it.
+                    ElementIcons.draw(guiGraphics, element, bx + 1, by + 1, bw - 2);
+                } else {
+                    guiGraphics.centeredText(this.font, "?",
+                            bx + (bw / 2), by + (bh / 2) - 4, 0xFF888888);
+                }
+
+                if (button.isHovered()) {
+                    java.util.List<Component> tooltip = java.util.List.of(
+                            Component.literal(label(element)).withStyle(net.minecraft.ChatFormatting.GOLD),
+                            Component.literal(getElementDescription(element))
+                    );
+                    guiGraphics.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
+                }
+            }
+        }
+    }
+
+    private String getElementDescription(String element) {
+        return switch (element.toLowerCase()) {
+            case "fire" -> "A hot element with great offensive capabilities.";
+            case "water" -> "A fluid element focused on healing and redirection.";
+            case "earth" -> "A sturdy element with strong defensive and trapping skills.";
+            case "air" -> "A swift element offering high mobility and evasion.";
+            case NO_CHANNELING -> "No channeling at all. Learn to shut it off in others instead.";
+            default -> "An ancient channeling art.";
+        };
+    }
+}

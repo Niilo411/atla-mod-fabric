@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:rabbit_foot",
+    "count": 5
+  },
+  "gives": {
+    "id": "elemental_paths:blood_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}

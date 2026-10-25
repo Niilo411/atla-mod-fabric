@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "atlamod:cleric/blood_scroll"
+    "elemental_paths:cleric/blood_scroll"
   ]
 }

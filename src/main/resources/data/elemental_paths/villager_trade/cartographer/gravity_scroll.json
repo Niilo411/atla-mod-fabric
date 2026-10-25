@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:piston",
+    "count": 6
+  },
+  "gives": {
+    "id": "elemental_paths:gravity_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}

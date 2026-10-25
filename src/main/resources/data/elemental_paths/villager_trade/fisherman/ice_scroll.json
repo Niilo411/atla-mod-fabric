@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:heart_of_the_sea",
+    "count": 1
+  },
+  "gives": {
+    "id": "elemental_paths:ice_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}

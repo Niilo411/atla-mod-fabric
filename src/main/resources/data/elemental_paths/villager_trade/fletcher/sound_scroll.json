@@ -1,0 +1,12 @@
+{
+  "wants": {
+    "id": "minecraft:feather",
+    "count": 32
+  },
+  "gives": {
+    "id": "elemental_paths:sound_scroll"
+  },
+  "max_uses": 2,
+  "xp": 12,
+  "reputation_discount": 0.05
+}
