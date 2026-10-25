@@ -23,16 +23,27 @@ public final class ElementIcons {
      */
     private static final int SOURCE_SIZE = 256;
 
-    private static final Map<String, Identifier> ICONS = Map.of(
-            "fire", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/fire_icon.png"),
-            "water", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/water_icon.png"),
-            "air", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/air_icon.png"),
-            "earth", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/earth_icon.png"),
+    private static final Map<String, Identifier> ICONS = Map.ofEntries(
+            Map.entry("fire", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/fire_icon.png")),
+            Map.entry("water", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/water_icon.png")),
+            Map.entry("air", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/air_icon.png")),
+            Map.entry("earth", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/earth_icon.png")),
+
+            // The sub-elements, worn in the HUD badge once one is switched to with [Y].
+            // Each wears its parent's ring colour.
+            Map.entry("lightning", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/lightning_icon.png")),
+            Map.entry("combustion", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/combustion_icon.png")),
+            Map.entry("ice", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/ice_icon.png")),
+            Map.entry("blood", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/blood_icon.png")),
+            Map.entry("sound", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/sound_icon.png")),
+            Map.entry("gravity", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/gravity_icon.png")),
+            Map.entry("metal", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/metal_icon.png")),
+            Map.entry("lava", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/lava_icon.png")),
 
             // Not a channeling art, but it is chosen from the same screen and worn in the
             // same HUD badge, so it needs an emblem for exactly the same reasons. Ours
             // rather than anyone's — see tools/GenChiIcon.java.
-            "nochanneling", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/nochanneling_icon.png")
+            Map.entry("nochanneling", Identifier.fromNamespaceAndPath("elemental_paths", "textures/gui/elements/nochanneling_icon.png"))
     );
 
     private ElementIcons() {
