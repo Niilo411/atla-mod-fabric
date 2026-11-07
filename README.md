@@ -28,6 +28,16 @@ The config library ([Forge Config API Port](https://modrinth.com/mod/forge-confi
 is bundled inside the jar. [Mod Menu](https://modrinth.com/mod/modmenu) is optional and adds
 a Config button in the mod list that opens the settings screen.
 
+## Other versions
+
+The mod also exists for other loaders and Minecraft versions:
+
+| Loader | Minecraft | Repository |
+|---|---|---|
+| NeoForge | 1.21.1 | [elemental-paths](https://github.com/Niilo411/elemental-paths) |
+| Fabric | 26.3 | [atla-mod-fabric](https://github.com/Niilo411/atla-mod-fabric/tree/mc-26.3) (`mc-26.3` branch) |
+| Forge | 1.20.1 | [atla-mod-forge](https://github.com/Niilo411/atla-mod-forge) |
+
 ## Installation
 
 1. Install the [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11, and put
