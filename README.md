@@ -19,18 +19,28 @@ blood channeler can only be stopped by another blood channeler.
 
 | | |
 |---|---|
-| Minecraft | 1.21.11 |
-| Loader | Fabric Loader 0.18.4+ |
+| Minecraft | 26.3 |
+| Loader | Fabric Loader 0.20.1+ |
 | Requires | [Fabric API](https://modrinth.com/mod/fabric-api) |
-| Java | 21+ |
+| Java | 25+ |
 
 The config library ([Forge Config API Port](https://modrinth.com/mod/forge-config-api-port))
 is bundled inside the jar. [Mod Menu](https://modrinth.com/mod/modmenu) is optional and adds
 a Config button in the mod list that opens the settings screen.
 
+## Other versions
+
+The mod also exists for other loaders and Minecraft versions:
+
+| Loader | Minecraft | Repository |
+|---|---|---|
+| NeoForge | 1.21.1 | [elemental-paths](https://github.com/Niilo411/elemental-paths) |
+| Fabric | 1.21.11 | [atla-mod-fabric](https://github.com/Niilo411/atla-mod-fabric) (`master` branch) |
+| Forge | 1.20.1 | [atla-mod-forge](https://github.com/Niilo411/atla-mod-forge) |
+
 ## Installation
 
-1. Install the [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11, and put
+1. Install the [Fabric Loader](https://fabricmc.net/use/) for Minecraft 26.3, and put
    [Fabric API](https://modrinth.com/mod/fabric-api) in your `mods` folder.
 2. Download `elemental_paths-<version>.jar` from
    [Releases](https://github.com/Niilo411/atla-mod-fabric/releases).
@@ -163,9 +173,9 @@ cd atla-mod-fabric
 
 The jar lands in `build/libs/`. `./gradlew runClient` launches a dev client.
 
-Any installed JDK will do to launch the build: Gradle downloads and uses a Java 21 for
-itself (see `gradle/gradle-daemon-jvm.properties`), since its build scripts cannot run on
-Java 26.
+Any installed JDK will do to launch the build: Gradle downloads and uses a Java 25 for
+itself (see `gradle/gradle-daemon-jvm.properties`), since Fabric Loom 1.19 needs Gradle to
+run on Java 25.
 
 `./gradlew runGametest` runs the automated checks on a headless server — every ability
 pressed, held, released and toggled, and the Spirit Realm's data decoded — and exits.
